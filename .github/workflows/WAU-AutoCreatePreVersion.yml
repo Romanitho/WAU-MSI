@@ -81,6 +81,7 @@ jobs:
           message: "Changed version to ${{ steps.versioning.outputs.version }}"
 
       - name: Build project
+        shell: powershell
         run: |
           echo "### Get MDT from Microsoft ###"
           wget https://download.microsoft.com/download/3/3/9/339BE62D-B4B8-4956-B58D-73C4685FC492/MicrosoftDeploymentToolkit_x64.msi
