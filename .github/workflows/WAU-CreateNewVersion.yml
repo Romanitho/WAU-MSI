@@ -63,7 +63,7 @@ jobs:
           Start-Process msiexec.exe -ArgumentList "/i MicrosoftDeploymentToolkit_x64.msi /qn /norestart" -Wait
 
           echo "### Copy ServiceUI.exe to 'Sources/WAU/Winget-AutoUpdate' folder ###"
-          Copy-Item -Path '$env:ProgramFiles\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe' -Destination ./Sources/WAU/Winget-AutoUpdate/ServiceUI.exe -Force
+          Copy-Item -Path "$env:ProgramFiles\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ./Sources/WAU/Winget-AutoUpdate/ServiceUI.exe -Force
 
           echo "### Go to Sources ###"
           cd .\Sources
