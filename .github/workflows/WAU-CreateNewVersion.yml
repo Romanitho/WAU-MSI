@@ -60,8 +60,8 @@ jobs:
           wget https://download.microsoft.com/download/3/3/9/339BE62D-B4B8-4956-B58D-73C4685FC492/MicrosoftDeploymentToolkit_x64.msi
 
           echo "### Copy ServiceUI.exe to 'Sources/WAU/Winget-AutoUpdate' folder ###"
-          & "C:\Program Files\7-Zip\7z.exe" x MicrosoftDeploymentToolkit_x64.msi
-          Copy-Item -Path Modena_File206 -Destination ./Sources/WAU/Winget-AutoUpdate/ServiceUI.exe -Force
+          & "C:\Program Files\7-Zip\7z.exe" x ./MicrosoftDeploymentToolkit_x64.msi
+          Copy-Item -Path ./Modena_File206 -Destination ./Sources/WAU/Winget-AutoUpdate/ServiceUI.exe -Force
 
           echo "### Go to Sources ###"
           cd .\Sources
