@@ -85,7 +85,9 @@ jobs:
           .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
           
           echo "### Get file SHA ###"
+          echo " - WAU_${{ steps.versioning.outputs.version }}_x86.msi:"
           Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x86.msi
+          echo " - WAU_${{ steps.versioning.outputs.version }}_x64.msi:"
           Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x64.msi
           
           echo "### Zip ADMX ###"
