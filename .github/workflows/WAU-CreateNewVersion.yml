@@ -61,7 +61,7 @@ jobs:
 
           echo "### Copy ServiceUI.exe to 'Sources/WAU/Winget-AutoUpdate' folder ###"
           & "C:\Program Files\7-Zip\7z.exe" x ./MicrosoftDeploymentToolkit_x64.msi
-          Copy-Item -Path ./Modena_File206 -Destination ./Sources/WAU/Winget-AutoUpdate/ServiceUI.exe -Force
+          Copy-Item -Path .\Modena_File206 -Destination .\Sources\WAU\Winget-AutoUpdate\ServiceUI.exe -Force
 
           echo "### Go to Sources ###"
           cd .\Sources
