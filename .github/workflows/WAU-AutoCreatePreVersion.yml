@@ -95,7 +95,7 @@ jobs:
 
           echo "### Create WAU msi ###"
           cd .\Wix
-          .\Make_MSI.ps1 -ProductVersion ${{ steps.versioning.outputs.version }} $OutputFolder "..\..\"
+          .\Make_MSI.ps1 -ProductVersion ${{ steps.versioning.outputs.version }} -OutputFolder "..\..\"
           cd ..
 
           echo "### Zip ADMX ###"
