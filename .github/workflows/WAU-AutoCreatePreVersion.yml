@@ -86,9 +86,9 @@ jobs:
           
           echo "### Get file SHA ###"
           echo " - WAU_${{ steps.versioning.outputs.version }}_x86.msi:"
-          Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x86.msi
+          Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x86.msi | select Algorithm, Hash | ft -HideTableHeaders
           echo " - WAU_${{ steps.versioning.outputs.version }}_x64.msi:"
-          Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x64.msi
+          Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x64.msi | select Algorithm, Hash | ft -HideTableHeaders
           
           echo "### Zip ADMX ###"
           Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
