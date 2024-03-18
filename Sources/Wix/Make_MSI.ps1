@@ -39,16 +39,14 @@ $x86Settings = @{ 'arch' = 'x86';
   'progfolder'           = 'ProgramFilesFolder';
   'upgradeCode'          = $UpgradeCodeX86;
   'productName'          = "${ProductName} (x86)";
-  #'outputMsi'            = (Join-Path $OutputFolder ($productID + "_" + $ProductVersion + "_x86.msi"))
-  'outputMsi'            = (Join-Path $OutputFolder ($productID + "_x86.msi"))
+  'outputMsi'            = (Join-Path $OutputFolder ($productID + "_" + $ProductVersion + "_x86.msi"))
 }
 $x64Settings = @{ 'arch' = 'x64';
   'sysFolder'            = 'System64Folder';
   'progfolder'           = 'ProgramFiles64Folder';
   'upgradeCode'          = $UpgradeCodeX64;
   'productName'          = "${ProductName} (x64)";
-  #'outputMsi'            = (Join-Path $OutputFolder ($productID + "_" + $ProductVersion + "_x64.msi"))
-  'outputMsi'            = (Join-Path $OutputFolder ($productID + "_x64.msi"))  
+  'outputMsi'            = (Join-Path $OutputFolder ($productID + "_" + $ProductVersion + "_x64.msi"))
 }
 
 If (!$Nox86) {
