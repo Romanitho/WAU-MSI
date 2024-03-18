@@ -1,7 +1,7 @@
 [Cmdletbinding()]
 Param(
   [Parameter(Mandatory = $false, Position = 0)]  [string] $Path = (Get-Location).Path,
-  [Parameter(Mandatory = $false)]  [string] $Sources = (Join-Path (Split-Path $Path -Parent) "\WAU\Winget-AutoUpdate"),
+  [Parameter(Mandatory = $false)]  [string] $Sources = (Get-Location).Path,
   [Parameter(Mandatory = $false)]  [string] $OutputFolder = (Get-Location).Path,
   [Parameter(Mandatory = $false)]  [string] $IconFile = "$($Path)\files\icon.ico",
   [Parameter(Mandatory = $false)]  [string] $BannerFile = "$($Path)\files\banner.bmp",

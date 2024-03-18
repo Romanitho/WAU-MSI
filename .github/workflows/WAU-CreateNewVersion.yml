@@ -43,23 +43,22 @@ jobs:
         run: |
           echo "### Get MDT from Microsoft ###"
           wget https://download.microsoft.com/download/3/3/9/339BE62D-B4B8-4956-B58D-73C4685FC492/MicrosoftDeploymentToolkit_x64.msi -UseBasicParsing -OutFile .\MicrosoftDeploymentToolkit_x64.msi
-
-          echo "### Copy ServiceUI.exe to 'Sources/WAU/Winget-AutoUpdate' folder ###"
           Start-Process .\MicrosoftDeploymentToolkit_x64.msi -ArgumentList "/quiet /norestart" -Wait
-          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\WAU\Winget-AutoUpdate\ServiceUI.exe" -Force
 
-          echo "### Go to Sources ###"
-          cd .\Sources
+          echo "### Duplicate WAU to WAU_x86 and WAU_x64"
+          Copy-Item -Path ".\Sources\WAU" -Destination ".\Sources\WAU_x64" -Recurce -Force
+          Copy-Item -Path ".\Sources\WAU" -Destination ".\Sources\WAU_x86" -Recurce -Force
+
+          echo "### Copy ServiceUI.exe (x64/x86) to 'Sources/WAU_(x86/x64)/Winget-AutoUpdate' folders ###"
+          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\WAU_x64\Winget-AutoUpdate\ServiceUI.exe" -Force
+          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\WAU_x86\Winget-AutoUpdate\ServiceUI.exe" -Force
 
           echo "### Create WAU msi ###"
-          cd .\Wix
-          .\Make_MSI.ps1 -ProductVersion ${{ steps.versioning.outputs.version }} -OutputFolder "..\..\"
-          cd ..
+          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x64" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
+          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
 
           echo "### Zip ADMX ###"
-          cd Policies
-          Compress-Archive -Path .\ADMX -DestinationPath ..\..\WAU_ADMX.zip -Force
-          cd ../..
+          Compress-Archive -Path .\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
 
           echo "### Create install counter file ###"
           echo "Install counter file." > WAU_InstallCounter
