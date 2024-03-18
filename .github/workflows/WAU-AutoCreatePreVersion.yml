@@ -65,21 +65,6 @@ jobs:
         run: |
           echo "Next Release version: ${{ steps.versioning.outputs.version }}"
 
-      - name: Overwrite Version.txt file
-        uses: DamianReeves/write-file-action@6929a9a6d1807689191dcc8bbe62b54d70a32b42 # v1.3
-        with:
-          path: Sources/WAU/Winget-AutoUpdate/Version.txt
-          write-mode: overwrite
-          contents: ${{ steps.versioning.outputs.version }}
-
-      - name: Commit & Push
-        uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # v1.4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force: true
-          message: "Changed version to ${{ steps.versioning.outputs.version }}"
-
       - name: Build project
         shell: powershell
         run: |
