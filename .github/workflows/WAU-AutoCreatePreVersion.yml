@@ -87,8 +87,8 @@ jobs:
           wget https://download.microsoft.com/download/3/3/9/339BE62D-B4B8-4956-B58D-73C4685FC492/MicrosoftDeploymentToolkit_x64.msi
 
           echo "### Copy ServiceUI.exe to 'Sources/WAU/Winget-AutoUpdate' folder ###"
-          & "C:\Program Files\7-Zip\7z.exe" x ./MicrosoftDeploymentToolkit_x64.msi
-          Copy-Item -Path .\Modena_File206 -Destination .\Sources\WAU\Winget-AutoUpdate\ServiceUI.exe -Force
+          Start-Process .\MicrosoftDeploymentToolkit_x64.msi -ArgumentList "/quiet /norestart" -Wait
+          Copy-Item -Path C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe -Destination .\Sources\WAU\Winget-AutoUpdate\ServiceUI.exe -Force
 
           echo "### Go to Sources ###"
           cd .\Sources
@@ -105,7 +105,7 @@ jobs:
 
           echo "### Create install counter file ###"
           echo "Install counter file." > WAU_InstallCounter
-
+          
       - name: Create release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1.14.0
         id: release
