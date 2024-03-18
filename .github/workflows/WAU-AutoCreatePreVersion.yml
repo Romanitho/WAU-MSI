@@ -85,7 +85,7 @@ jobs:
           .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
 
           echo "### Zip ADMX ###"
-          Compress-Archive -Path .\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
+          Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
 
           echo "### Create install counter file ###"
           echo "Install counter file." > WAU_InstallCounter
