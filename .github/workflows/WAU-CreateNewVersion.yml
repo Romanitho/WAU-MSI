@@ -68,7 +68,7 @@ jobs:
         id: release
         with:
           tag: "v${{ steps.versioning.outputs.version }}"
-          prerelease: true
+          prerelease: ${{ github.event.inputs.pre-release }}
           generateReleaseNotes: true
           name: "v${{ steps.versioning.outputs.version }}"
           artifacts: "WAU_${{ steps.versioning.outputs.version }}_x86.msi,WAU_${{ steps.versioning.outputs.version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
