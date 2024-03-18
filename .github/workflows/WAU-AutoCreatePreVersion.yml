@@ -81,8 +81,8 @@ jobs:
           Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\WAU_x86\Winget-AutoUpdate\ServiceUI.exe" -Force
 
           echo "### Create WAU msi ###"
-          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x64" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
-          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
+          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x64\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
+          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
           
           echo "### Get file SHA ###"
           echo " - WAU_${{ steps.versioning.outputs.version }}_x86.msi:"
