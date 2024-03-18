@@ -139,7 +139,7 @@ foreach ($platform in $platforms) {
 
   # Save XML and create productWxs
   $wixXml.Save($modulesWxs)
-  & $heatExe dir $Sources -nologo -sfrag -sw5151 -ag -srd -gg -dir $ProductName -out $productWxs -cg INSTALLDIR -dr INSTALLDIR
+  & $heatExe dir $Sources -nologo -sfrag -sw5150 -ag -srd -gg -dir $ProductName -out $productWxs -cg INSTALLDIR -dr INSTALLDIR
 
   # Produce wixobj files
   & $candleexe $modulesWxs -out $modulesWixobj
