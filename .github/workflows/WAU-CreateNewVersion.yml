@@ -31,12 +31,11 @@ jobs:
           lfs: "true"
 
       - name: Auto Increment Semver Action
-        uses: MCKanpolat/auto-semver-action@5003b8d37f4b03d95f15303ea10242cbf7c13141 # 2
+        uses: reecetech/version-increment@71036b212bbdc100b48aae069870f10953433346 # 2023.10.2
         id: versioning
         with:
-          releaseType: ${{ github.event.inputs.version }}
-          incrementPerCommit: false
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          scheme: semver
+          increment: ${{ github.event.inputs.version }}
 
       - name: Build project
         shell: powershell
@@ -54,14 +53,14 @@ jobs:
           Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\WAU_x86\Winget-AutoUpdate\ServiceUI.exe" -Force
 
           echo "### Create WAU msi ###"
-          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x64\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
-          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
+          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x64\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.v-version }} -NoX86
+          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.v-version }} -NoX64
 
           echo "### Get file SHA ###"
-          echo " - WAU_${{ steps.versioning.outputs.version }}_x86.msi:"
-          Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x86.msi | select Algorithm, Hash | ft -HideTableHeaders
-          echo " - WAU_${{ steps.versioning.outputs.version }}_x64.msi:"
-          Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x64.msi | select Algorithm, Hash | ft -HideTableHeaders
+          echo " - WAU_${{ steps.versioning.outputs.v-version }}_x86.msi:"
+          Get-FileHash .\WAU_${{ steps.versioning.outputs.v-version }}_x86.msi | select Algorithm, Hash | ft -HideTableHeaders
+          echo " - WAU_${{ steps.versioning.outputs.v-version }}_x64.msi:"
+          Get-FileHash .\WAU_${{ steps.versioning.outputs.v-version }}_x64.msi | select Algorithm, Hash | ft -HideTableHeaders
           
           echo "### Zip ADMX ###"
           Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
@@ -73,8 +72,8 @@ jobs:
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1.14.0
         id: release
         with:
-          tag: "v${{ steps.versioning.outputs.version }}"
+          tag: "v${{ steps.versioning.outputs.v-version }}"
           prerelease: ${{ github.event.inputs.pre-release }}
           generateReleaseNotes: true
-          name: "v${{ steps.versioning.outputs.version }}"
-          artifacts: "WAU_${{ steps.versioning.outputs.version }}_x86.msi,WAU_${{ steps.versioning.outputs.version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
+          name: "v${{ steps.versioning.outputs.v-version }}"
+          artifacts: "WAU_${{ steps.versioning.outputs.v-version }}_x86.msi,WAU_${{ steps.versioning.outputs.v-version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
