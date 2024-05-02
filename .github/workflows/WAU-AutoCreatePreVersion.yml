@@ -100,11 +100,11 @@ jobs:
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1.14.0
         id: release
         with:
-          tag: "v${{ steps.versioning.outputs.v-version }}"
+          tag: "v${{ steps.versioning.outputs.version }}"
           prerelease: true
           generateReleaseNotes: true
-          name: "v${{ steps.versioning.outputs.v-version }} [Nightly Build]"
-          artifacts: "WAU_${{ steps.versioning.outputs.v-version }}_x86.msi,WAU_${{ steps.versioning.outputs.v-version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
+          name: "v${{ steps.versioning.outputs.version }} [Nightly Build]"
+          artifacts: "WAU_${{ steps.versioning.outputs.version }}_x86.msi,WAU_${{ steps.versioning.outputs.version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
 
       - name: URL to release
         run: echo "Release -> ${{ steps.release.outputs.html_url }}"
