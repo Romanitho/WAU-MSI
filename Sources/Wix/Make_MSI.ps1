@@ -38,8 +38,8 @@ $x86Settings = @{ 'arch' = 'x86';
   'sysFolder'            = 'SystemFolder';
   'progfolder'           = 'ProgramFilesFolder';
   'upgradeCode'          = $UpgradeCodeX86;
-  'productName'          = "${ProductName} (x86)";
-  'outputMsi'            = (Join-Path $OutputFolder ($productID + "_" + $ProductVersion + "_x86.msi"))
+  'productName'          = "${ProductName}";
+  'outputMsi'            = (Join-Path $OutputFolder ($productID + "_" + $ProductVersion + ".msi"))
 }
 $x64Settings = @{ 'arch' = 'x64';
   'sysFolder'            = 'System64Folder';
