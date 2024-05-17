@@ -77,4 +77,4 @@ jobs:
           prerelease: ${{ github.event.inputs.pre-release }}
           generateReleaseNotes: true
           name: "v${{ steps.versioning.outputs.v-version }}"
-          artifacts: "WAU_${{ steps.versioning.outputs.v-version }}.msi,WAU_${{ steps.versioning.outputs.v-version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
+          artifacts: "WAU_${{ steps.versioning.outputs.version }}.msi,WAU_${{ steps.versioning.outputs.version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
