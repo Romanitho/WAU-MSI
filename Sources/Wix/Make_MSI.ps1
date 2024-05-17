@@ -8,7 +8,7 @@ Param(
   [Parameter(Mandatory = $false)]  [string] $DialogFile = "$($Path)\Sources\Wix\files\dialog.bmp",
   [Parameter(Mandatory = $false)]  [string] $ProductId = "WAU",
   [Parameter(Mandatory = $false)]  [string] $ProductName = "Winget-AutoUpdate",
-  [Parameter(Mandatory = $false)]  [string] $ProductVersion,
+  [Parameter(Mandatory = $false)]  [string] $ProductVersion = "1.0.0",
   [Parameter(Mandatory = $false)]  [string] $Manufacturer = "Romanitho",
   [Parameter(Mandatory = $false)]  [string] $HelpLink = "https://github.com/Romanitho/Winget-AutoUpdate",
   [Parameter(Mandatory = $false)]  [string] $AboutLink = "https://github.com/Romanitho/Winget-AutoUpdate",
@@ -72,67 +72,75 @@ foreach ($platform in $platforms) {
   $wixXml = [xml] @"
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
-  <Product Id="*" Language="1033" Name="$platformProductName" Version="$ProductVersion"
-           Manufacturer="$Manufacturer" UpgradeCode="$platformUpgradeCode" >
+  <Product Id="*" Language="1033" Name="$platformProductName" Version="$ProductVersion" Manufacturer="$Manufacturer" UpgradeCode="$platformUpgradeCode" >
 
-    <Package Id="*" Description="$platformProductName Installer"
-             InstallPrivileges="elevated" Comments="$ProductName Installer"
-             InstallerVersion="200" Compressed="yes" Platform="$platformArch">
-    </Package>
+    <Package Id="*" Description="$platformProductName Installer" InstallPrivileges="elevated" Comments="$ProductName Installer" InstallerVersion="200" Compressed="yes" Platform="$platformArch"/>
     <Icon Id="icon.ico" SourceFile="$IconFile"/>
+    
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    <Property Id="LISTPATH" Value="null" />
+    <Property Id="MODSPATH" Value="null" />
+    <Property Id="AZUREBLOBURL" Value="null" />
+    <Property Id="DESKTOPSHORTCUT" Value="0" />
+    <Property Id="NOTIFICATIONLEVEL" Value="Full" />
+    <Property Id="UPDATESATLOGON" Value="1" />
+    <Property Id="UPDATESINTERVAL" Value="Weekly" />
+    <Property Id="UPDATESATTIME" Value="06am" />
+    <Property Id="RUNONMETERED" Value="0" />
+    <Property Id="INSTALLUSERCONTEXT" Value="1" />
+    <Property Id="BYPASSLISTFORUSERS" Value="null" />
+    <Property Id="RUNWAU" Value="0" />
+    <Property Id="DISABLEWAUAUTOUPDATE" Value="0" />
+    <Property Id="USEWHITELIST" Value="0" />
+    <Property Id="MAXLOGFILES" Value="3" />
+    <Property Id="MAXLOGSIZE" Value="1048576" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Run WAU after closing this wizard." />
+    <Property Id="WixShellExecTarget" Value="schtasks /run /tn WAU\Winget-AutoUpdate" />
+    <Property Id="ARPHELPLINK" Value="$HelpLink"/>
+    <Property Id="ARPURLINFOABOUT" Value="$AboutLink"/>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
+
     <Upgrade Id="$platformUpgradeCode">
       <!-- Detect any newer version of this product -->
-      <UpgradeVersion Minimum="$ProductVersion" IncludeMinimum="no" OnlyDetect="yes"
-                      Language="1033" Property="NEWPRODUCTFOUND" />
+      <UpgradeVersion Minimum="$ProductVersion" IncludeMinimum="no" OnlyDetect="yes" Language="1033" Property="NEWPRODUCTFOUND" />
 
       <!-- Detect and remove any older version of this product -->
-      <UpgradeVersion Maximum="$ProductVersion" IncludeMaximum="yes" OnlyDetect="no"
-                      Language="1033" Property="OLDPRODUCTFOUND" />
+      <UpgradeVersion Maximum="$ProductVersion" IncludeMaximum="yes" OnlyDetect="no" Language="1033" Property="OLDPRODUCTFOUND" />
     </Upgrade>
 
     <!-- Define a custom action -->
-    <CustomAction Id="PreventDowngrading"
-                  Error="Newer version already installed." />
+    <CustomAction Id="PreventDowngrading" Error="Newer version already installed." />
 
     <InstallExecuteSequence>
       <!-- Prevent downgrading -->
-      <Custom Action="PreventDowngrading" After="FindRelatedProducts">
-        NEWPRODUCTFOUND
-      </Custom>
+      <Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
       <RemoveExistingProducts After="InstallFinalize" />
     </InstallExecuteSequence>
 
     <InstallUISequence>
       <!-- Prevent downgrading -->
-      <Custom Action="PreventDowngrading" After="FindRelatedProducts">
-        NEWPRODUCTFOUND
-      </Custom>
+      <Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
     </InstallUISequence>
 
     <MediaTemplate EmbedCab="yes"/>
     <WixVariable Id="WixUIBannerBmp" Value="$BannerFile"></WixVariable>
     <WixVariable Id="WixUIDialogBmp" Value="$DialogFile"></WixVariable>
+
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$platformProgFolder" Name="$platformProgFolder">
-        <Directory Id="INSTALLDIR" Name="$ProductName">
-        </Directory>
+        <Directory Id="INSTALLDIR" Name="$ProductName"/>
       </Directory>
     </Directory>
-    <Property Id="ARPHELPLINK" Value="$HelpLink"></Property>
-    <Property Id="ARPURLINFOABOUT" Value="$AboutLink"></Property>
+    
     <Feature Id="$ProductId" Title="$ProductName" Level="1">
-
         <ComponentGroupRef Id="INSTALLDIR">
         </ComponentGroupRef>
-      
     </Feature>
     <UIRef Id="WixUI_InstallDir"/>
     <UI>
     	<Publish Control="Next" Dialog="WelcomeDlg" Value="InstallDirDlg" Event="NewDialog">1</Publish>
-		<Publish Control="Back" Dialog="InstallDirDlg" Value="WelcomeDlg" Event="NewDialog" Order="2">2</Publish>
+		  <Publish Control="Back" Dialog="InstallDirDlg" Value="WelcomeDlg" Event="NewDialog" Order="2">2</Publish>
     </UI>
-    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"></Property>
   </Product>
 </Wix>
 "@
