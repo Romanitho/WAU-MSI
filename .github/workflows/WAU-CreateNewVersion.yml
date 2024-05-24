@@ -73,8 +73,8 @@ jobs:
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1.14.0
         id: release
         with:
-          tag: "v${{ steps.versioning.outputs.v-version }}"
+          tag: "v${{ steps.versioning.outputs.version }}"
           prerelease: ${{ github.event.inputs.pre-release }}
           generateReleaseNotes: true
-          name: "v${{ steps.versioning.outputs.v-version }}"
+          name: "v${{ steps.versioning.outputs.version }}"
           artifacts: "WAU_${{ steps.versioning.outputs.version }}.msi,WAU_${{ steps.versioning.outputs.version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
