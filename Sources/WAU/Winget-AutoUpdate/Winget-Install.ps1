@@ -13,6 +13,9 @@ Forward Winget App ID to install. For multiple apps, separate with ",". Case sen
 .PARAMETER Uninstall
 To uninstall app. Works with AppIDs
 
+.PARAMETER AllowUpgrade
+To allow upgrade app if present. Works with AppIDs
+
 .PARAMETER LogPath
 Used to specify logpath. Default is same folder as Winget-Autoupdate project
 
@@ -34,6 +37,9 @@ If '-Uninstall' is used, it removes the app from WAU White List.
 
 .EXAMPLE
 .\winget-install.ps1 -AppIDs "7zip.7zip -v 22.00", "Notepad++.Notepad++"
+
+.EXAMPLE
+.\winget-install.ps1 -AppIDs "Notepad++.Notepad++" -AllowUpgrade
 #>
 
 [CmdletBinding()]
@@ -41,7 +47,8 @@ param(
     [Parameter(Mandatory = $True, ParameterSetName = "AppIDs")] [String[]] $AppIDs,
     [Parameter(Mandatory = $False)] [Switch] $Uninstall,
     [Parameter(Mandatory = $False)] [String] $LogPath,
-    [Parameter(Mandatory = $False)] [Switch] $WAUWhiteList
+    [Parameter(Mandatory = $False)] [Switch] $WAUWhiteList,
+    [Parameter(Mandatory = $False)] [Switch] $AllowUpgrade
 )
 
 
@@ -136,7 +143,7 @@ function Test-ModsUninstall ($AppID) {
 #Install function
 function Install-App ($AppID, $AppArgs) {
     $IsInstalled = Confirm-Installation $AppID
-    if (!($IsInstalled)) {
+    if (!($IsInstalled) -or $AllowUpgrade ) {
         #Check if mods exist (or already exist) for preinstall/install/installedonce/installed
         $ModsPreInstall, $ModsInstall, $ModsInstalledOnce, $ModsInstalled = Test-ModsInstall $($AppID)
 
@@ -256,9 +263,13 @@ function Uninstall-App ($AppID, $AppArgs) {
 
 #Function to Add app to WAU white list
 function Add-WAUWhiteList ($AppID) {
-    #Check if WAU default intall path exists
-    $WhiteList = "$WAUInstallLocation\included_apps.txt"
-    if (Test-Path $WhiteList) {
+    #Check if WAU default intall path is defined
+    if ($WAUInstallLocation) {
+        $WhiteList = "$WAUInstallLocation\included_apps.txt"
+        #Create included_apps.txt if it doesn't exist
+        if (!(Test-Path $WhiteList)) {
+            New-Item -ItemType File -Path $WhiteList -Force -ErrorAction SilentlyContinue
+        }
         Write-ToLog "-> Add $AppID to WAU included_apps.txt"
         #Add App to "included_apps.txt"
         Add-Content -path $WhiteList -Value "`n$AppID" -Force
@@ -300,7 +311,7 @@ $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Pri
 $Script:IsElevated = $CurrentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 #Get WAU Installed location
-$WAURegKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Winget-AutoUpdate\"
+$WAURegKey = "HKLM:\SOFTWARE\Romanitho\Winget-AutoUpdate\"
 $Script:WAUInstallLocation = Get-ItemProperty $WAURegKey -ErrorAction SilentlyContinue | Select-Object -ExpandProperty InstallLocation
 
 #LogPath initialisation
