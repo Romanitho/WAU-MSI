@@ -5,6 +5,7 @@ param(
     [Parameter(Mandatory = $False)] [Switch] $Uninstall = $false
 )
 
+
 #For troubleshooting
 Write-Output "AppListPath: $AppListPath"
 Write-Output "InstallPath: $InstallPath"
@@ -33,7 +34,7 @@ function Install-WingetAutoUpdate {
 
         # Settings for the scheduled task for Updates (System)
         Write-Host "-> Installing WAU scheduled tasks"
-        $taskAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$($WAUinstallPath)\winget-upgrade.ps1`""
+        $taskAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$($InstallPath)winget-upgrade.ps1`""
         $taskTriggers = @()
         if ($WAUconfig.WAU_UpdatesAtLogon -eq 1) {
             $tasktriggers += New-ScheduledTaskTrigger -AtLogOn
@@ -65,7 +66,7 @@ function Install-WingetAutoUpdate {
         Register-ScheduledTask -TaskName 'Winget-AutoUpdate' -TaskPath 'WAU' -InputObject $task -Force | Out-Null
 
         # Settings for the scheduled task in User context
-        $taskAction = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$($WAUinstallPath)\Invisible.vbs`" `"powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"`"`"$($WAUinstallPath)\winget-upgrade.ps1`"`""
+        $taskAction = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$($InstallPath)Invisible.vbs`" `"powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"`"`"$($InstallPath)winget-upgrade.ps1`"`""
         $taskUserPrincipal = New-ScheduledTaskPrincipal -GroupId S-1-5-11
         $taskSettings = New-ScheduledTaskSettingsSet -Compatibility Win8 -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 03:00:00
         # Set up the task for user apps
@@ -73,7 +74,7 @@ function Install-WingetAutoUpdate {
         Register-ScheduledTask -TaskName 'Winget-AutoUpdate-UserContext' -TaskPath 'WAU' -InputObject $task -Force | Out-Null
 
         # Settings for the scheduled task for Notifications
-        $taskAction = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$($WAUinstallPath)\Invisible.vbs`" `"powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"`"`"$($WAUinstallPath)\winget-notify.ps1`"`""
+        $taskAction = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$($InstallPath)Invisible.vbs`" `"powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"`"`"$($InstallPath)winget-notify.ps1`"`""
         $taskUserPrincipal = New-ScheduledTaskPrincipal -GroupId S-1-5-11
         $taskSettings = New-ScheduledTaskSettingsSet -Compatibility Win8 -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 00:05:00
         # Set up the task, and register it
@@ -81,7 +82,7 @@ function Install-WingetAutoUpdate {
         Register-ScheduledTask -TaskName 'Winget-AutoUpdate-Notify' -TaskPath 'WAU' -InputObject $task -Force | Out-Null
 
         # Settings for the GPO scheduled task
-        $taskAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$($WAUinstallPath)\WAU-Policies.ps1`""
+        $taskAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$($InstallPath)WAU-Policies.ps1`""
         $tasktrigger = New-ScheduledTaskTrigger -Daily -At 6am
         $taskUserPrincipal = New-ScheduledTaskPrincipal -UserId S-1-5-18 -RunLevel Highest
         $taskSettings = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 00:05:00
@@ -133,6 +134,12 @@ function Uninstall-WingetAutoUpdate {
     if ($AppLists) {
         Write-Output "Remove item: $AppLists"
         Remove-Item $AppLists -Force
+    }
+
+    $ConfFolder = Get-Item (Join-Path "$InstallPath" "config")
+    if ($AppLists) {
+        Write-Output "Remove item: $ConfFolder"
+        Remove-Item $ConfFolder -Force
     }
 
     Write-Host "Uninstallation done!`n"

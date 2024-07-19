@@ -2,7 +2,7 @@
 
 function Update-WAU {
 
-    $OnClickAction = "https://github.com/Romanitho/Winget-AutoUpdate/releases"
+    $OnClickAction = "https://github.com/Romanitho/WAU-MSI/releases"
     $Button1Text = $NotifLocale.local.outputs.output[10].message
 
     #Send available update notification
@@ -20,7 +20,7 @@ function Update-WAU {
 
         #Download the zip
         Write-ToLog "Downloading the GitHub Repository version $WAUAvailableVersion" "Cyan"
-        Invoke-RestMethod -Uri "https://github.com/Romanitho/Winget-AutoUpdate/releases/download/v$($WAUAvailableVersion)/WAU.zip" -OutFile $ZipFile
+        Invoke-RestMethod -Uri "https://github.com/Romanitho/WAU-MSI/releases/download/v$($WAUAvailableVersion)/WAU.zip" -OutFile $ZipFile
 
         #Extract Zip File
         Write-ToLog "Unzipping the WAU Update package" "Cyan"
@@ -44,13 +44,6 @@ function Update-WAU {
         Write-ToLog "Done. Cleaning temp files..." "Cyan"
         Remove-Item -Path $ZipFile -Force -ErrorAction SilentlyContinue
         Remove-Item -Path $location -Recurse -Force -ErrorAction SilentlyContinue
-
-        #Set new version to registry
-        New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Winget-AutoUpdate" -Name "DisplayVersion" -Value $WAUAvailableVersion -Force | Out-Null
-        New-ItemProperty -Path "HKLM:\SOFTWARE\Romanitho\Winget-AutoUpdate" -Name "ProductVersion" -Value $WAUAvailableVersion -Force | Out-Null
-
-        #Set Post Update actions to 1
-        New-ItemProperty -Path "HKLM:\SOFTWARE\Romanitho\Winget-AutoUpdate" -Name "WAU_PostUpdateActions" -Value 1 -Force | Out-Null
 
         #Send success Notif
         Write-ToLog "WAU Update completed." "Green"
