@@ -13,37 +13,18 @@ function Update-WAU {
 
     #Run WAU update
     try {
-
-        #Force to create a zip file
-        $ZipFile = "$WorkingDir\WAU_update.zip"
-        New-Item $ZipFile -ItemType File -Force | Out-Null
-
-        #Download the zip
+        #Download the msi
         Write-ToLog "Downloading the GitHub Repository version $WAUAvailableVersion" "Cyan"
-        Invoke-RestMethod -Uri "https://github.com/Romanitho/WAU-MSI/releases/download/v$($WAUAvailableVersion)/WAU.zip" -OutFile $ZipFile
+        $MsiFile = "$env:temp\WAU.msi"
+        Invoke-RestMethod -Uri "https://github.com/Romanitho/WAU-MSI/releases/download/v$($WAUAvailableVersion)/WAU.msi" -OutFile $MsiFile
 
-        #Extract Zip File
-        Write-ToLog "Unzipping the WAU Update package" "Cyan"
-        $location = "$WorkingDir\WAU_update"
-        Expand-Archive -Path $ZipFile -DestinationPath $location -Force
-        Get-ChildItem -Path $location -Recurse | Unblock-File
-
-        #Update scritps
+        #Update WAU
         Write-ToLog "Updating WAU..." "Yellow"
-        $TempPath = (Resolve-Path "$location\Winget-AutoUpdate\")[0].Path
-        $ServiceUI = Test-Path "$WorkingDir\ServiceUI.exe"
-        if ($TempPath -and $ServiceUI) {
-            #Do not copy ServiceUI if already existing, causing error if in use.
-            Copy-Item -Path "$TempPath\*" -Destination "$WorkingDir\" -Exclude ("icons", "ServiceUI.exe") -Recurse -Force
-        }
-        elseif ($TempPath) {
-            Copy-Item -Path "$TempPath\*" -Destination "$WorkingDir\" -Exclude "icons" -Recurse -Force
-        }
+        Start-Process msiexec.exe -ArgumentList "$MsiFile /qn"
 
         #Remove update zip file and update temp folder
-        Write-ToLog "Done. Cleaning temp files..." "Cyan"
-        Remove-Item -Path $ZipFile -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $location -Recurse -Force -ErrorAction SilentlyContinue
+        Write-ToLog "Done. Cleaning msi file..." "Cyan"
+        Remove-Item -Path $MsiFile -Force -ErrorAction SilentlyContinue
 
         #Send success Notif
         Write-ToLog "WAU Update completed." "Green"
@@ -54,7 +35,7 @@ function Update-WAU {
 
         #Rerun with newer version
         Write-ToLog "Re-run WAU"
-        Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command `"$WorkingDir\winget-upgrade.ps1`""
+        Get-ScheduledTask -TaskName "Winget-AutoUpdate" -ErrorAction Stop | Start-ScheduledTask -ErrorAction Stop
 
         exit
 

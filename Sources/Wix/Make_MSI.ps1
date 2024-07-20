@@ -51,7 +51,7 @@ $x86Settings = @{
 	'upgradeCode' = $UpgradeCodeX86;
 	'productName' = "${ProductName}";
 	'win64'       = 'no';
-	'outputMsi'   = (Join-Path $OutputFolder ($productID + ".msi"))
+	'outputMsi'   = (Join-Path $OutputFolder ($productID + "_x86.msi"))
 }
 $x64Settings = @{
 	'arch'        = 'x64';
@@ -60,7 +60,7 @@ $x64Settings = @{
 	'upgradeCode' = $UpgradeCodeX64;
 	'productName' = "${ProductName}";
 	'win64'       = 'yes';
-	'outputMsi'   = (Join-Path $OutputFolder ($productID + "_x64.msi"))
+	'outputMsi'   = (Join-Path $OutputFolder ($productID + ".msi"))
 }
 
 If (!$Nox86) {

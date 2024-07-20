@@ -47,22 +47,22 @@ jobs:
 
           echo "### Duplicate WAU to WAU_x86 and WAU_x64"
           Copy-Item -Path ".\Sources\WAU" -Destination ".\Sources\WAU_x64" -Recurse -Force
-          Copy-Item -Path ".\Sources\WAU" -Destination ".\Sources\WAU_x86" -Recurse -Force
+          #Copy-Item -Path ".\Sources\WAU" -Destination ".\Sources\WAU_x86" -Recurse -Force
 
           echo "### Copy ServiceUI.exe (x64/x86) to 'Sources/WAU_(x86/x64)/Winget-AutoUpdate' folders ###"
           Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\WAU_x64\Winget-AutoUpdate\ServiceUI.exe" -Force
-          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\WAU_x86\Winget-AutoUpdate\ServiceUI.exe" -Force
+          #Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\WAU_x86\Winget-AutoUpdate\ServiceUI.exe" -Force
 
           echo "### Create WAU msi ###"
           .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x64\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
-          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
+          #.\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
 
           echo "### Get file SHA ###"
           echo " - WAU_${{ steps.versioning.outputs.version }}.msi:"
           Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}.msi | select Algorithm, Hash | ft -HideTableHeaders
-          echo " - WAU_${{ steps.versioning.outputs.version }}_x64.msi:"
-          Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x64.msi | select Algorithm, Hash | ft -HideTableHeaders
-          
+          #echo " - WAU_${{ steps.versioning.outputs.version }}_x86.msi:"
+          #Get-FileHash .\WAU_${{ steps.versioning.outputs.version }}_x86.msi | select Algorithm, Hash | ft -HideTableHeaders
+
           echo "### Zip ADMX ###"
           Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
 
@@ -77,4 +77,4 @@ jobs:
           prerelease: ${{ github.event.inputs.pre-release }}
           generateReleaseNotes: true
           name: "v${{ steps.versioning.outputs.version }}"
-          artifacts: "WAU_${{ steps.versioning.outputs.version }}.msi,WAU_${{ steps.versioning.outputs.version }}_x64.msi,WAU_ADMX.zip,WAU_InstallCounter"
+          artifacts: "WAU_${{ steps.versioning.outputs.version }}.msi,WAU_ADMX.zip,WAU_InstallCounter"
