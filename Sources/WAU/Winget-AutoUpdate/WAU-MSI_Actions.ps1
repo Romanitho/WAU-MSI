@@ -98,8 +98,8 @@ function Install-WingetAutoUpdate {
         $sec = $sec + '(A;;GRGX;;;AU)'
         $task.SetSecurityDescriptor($sec, 0)
 
-        #Copy App list to install folder
-        if ($AppListPath) {
+        #Copy App list to install folder (exept on self update)
+        if ($AppListPath -notlike "$InstallPath*") {
             Copy-Item -Path $AppListPath -Destination $InstallPath
         }
 
