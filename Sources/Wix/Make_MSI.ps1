@@ -49,7 +49,7 @@ $x86Settings = @{
 	'sysFolder'   = 'System32';
 	'progfolder'  = 'ProgramFilesFolder';
 	'upgradeCode' = $UpgradeCodeX86;
-	'productName' = "${ProductName}";
+	'productName' = "${ProductName} (x86)";
 	'win64'       = 'no';
 	'outputMsi'   = (Join-Path $OutputFolder ($productID + "_x86.msi"))
 }

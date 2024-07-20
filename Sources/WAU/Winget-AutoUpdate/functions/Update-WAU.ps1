@@ -20,22 +20,7 @@ function Update-WAU {
 
         #Update WAU
         Write-ToLog "Updating WAU..." "Yellow"
-        Start-Process msiexec.exe -ArgumentList "$MsiFile /qn"
-
-        #Remove update zip file and update temp folder
-        Write-ToLog "Done. Cleaning msi file..." "Cyan"
-        Remove-Item -Path $MsiFile -Force -ErrorAction SilentlyContinue
-
-        #Send success Notif
-        Write-ToLog "WAU Update completed." "Green"
-        $Title = $NotifLocale.local.outputs.output[3].title -f "Winget-AutoUpdate"
-        $Message = $NotifLocale.local.outputs.output[3].message -f $WAUAvailableVersion
-        $MessageType = "success"
-        Start-NotifTask -Title $Title -Message $Message -MessageType $MessageType -Button1Action $OnClickAction -Button1Text $Button1Text
-
-        #Rerun with newer version
-        Write-ToLog "Re-run WAU"
-        Get-ScheduledTask -TaskName "Winget-AutoUpdate" -ErrorAction Stop | Start-ScheduledTask -ErrorAction Stop
+        Start-Process msiexec.exe -ArgumentList "$MsiFile /qn WIXUI_EXITDIALOGOPTIONALCHECKBOX=1"
 
         exit
 
