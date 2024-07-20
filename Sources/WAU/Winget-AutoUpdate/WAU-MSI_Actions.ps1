@@ -111,11 +111,11 @@ function Install-WingetAutoUpdate {
             Write-Host "-> Not able to report installation."
         }
 
-        Write-Host "-> WAU Post actions succeeded!`n"
+        Write-Host "-> WAU MSI Post actions succeeded!`n"
 
     }
     catch {
-        Write-Host "-> WAU Installation failed! Error $_ - Try running me with admin rights.`n"
+        Write-Host "-> WAU Installation failed! Error $_.`n"
         return $False
     }
 }
