@@ -45,7 +45,7 @@ if ($IsSystem) {
                     $null = (New-Item "$WorkingDir\logs\symlink.txt" -Value $symLink -Force)
                 }
                 #Rerun WAU in system context with ServiceUI
-                Start-Process "ServiceUI.exe" -ArgumentList "-process:explorer.exe $env:windir\System32\wscript.exe Invisible.vbs ""powershell.exe -NoProfile -ExecutionPolicy Bypass -File winget-upgrade.ps1""" -WorkingDirectory $WorkingDir
+                Start-Process "ServiceUI.exe" -ArgumentList "-process:explorer.exe $env:windir\System32\wscript.exe Invisible.vbs ""\""powershell.exe -NoProfile -ExecutionPolicy Bypass -File winget-upgrade.ps1""\""" -WorkingDirectory $WorkingDir
                 Exit 0
             }
             else {
