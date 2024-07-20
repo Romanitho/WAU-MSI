@@ -32,10 +32,6 @@ if ($IsSystem) {
         if (!(Test-Path -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-updates.log" -ErrorAction SilentlyContinue)) {
             $symLink = New-Item -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-updates.log" -ItemType SymbolicLink -Value $LogFile -Force -ErrorAction SilentlyContinue
         }
-        # Check if install.log and symlink WAU-install.log exists, make symlink (doesn't work under ServiceUI)
-        if ((Test-Path -Path ('{0}\logs\install.log' -f $WorkingDir) -ErrorAction SilentlyContinue) -and !(Test-Path -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-install.log" -ErrorAction SilentlyContinue)) {
-            $symLink = (New-Item -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-install.log" -ItemType SymbolicLink -Value ('{0}\logs\install.log' -f $WorkingDir) -Force -Confirm:$False -ErrorAction SilentlyContinue)
-        }
     }
     #Check if running with session ID 0
     if ($SessionID -eq 0) {
@@ -49,7 +45,7 @@ if ($IsSystem) {
                     $null = (New-Item "$WorkingDir\logs\symlink.txt" -Value $symLink -Force)
                 }
                 #Rerun WAU in system context with ServiceUI
-                & $WorkingDir\ServiceUI.exe -process:explorer.exe $env:windir\System32\wscript.exe \`"$WorkingDir\Invisible.vbs\`" \`"powershell.exe -NoProfile -ExecutionPolicy Bypass -File \`"\`"$WorkingDir\winget-upgrade.ps1\`"\`"\`"
+                Start-Process "ServiceUI.exe" -ArgumentList "-process:explorer.exe $env:windir\System32\wscript.exe Invisible.vbs ""powershell.exe -NoProfile -ExecutionPolicy Bypass -File winget-upgrade.ps1""" -WorkingDirectory $WorkingDir
                 Exit 0
             }
             else {
@@ -413,4 +409,3 @@ if (Test-Network) {
 
 #End
 Write-ToLog "End of process!" "Cyan"
-Start-Sleep 3
