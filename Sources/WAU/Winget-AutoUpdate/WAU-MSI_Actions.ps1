@@ -130,14 +130,14 @@ function Uninstall-WingetAutoUpdate {
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-UserContext" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-Policies" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
 
-    $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt")
+    $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") -ErrorAction SilentlyContinue
     if ($AppLists) {
         Write-Output "Remove item: $AppLists"
         Remove-Item $AppLists -Force
     }
 
-    $ConfFolder = Get-Item (Join-Path "$InstallPath" "config")
-    if ($AppLists) {
+    $ConfFolder = Get-Item (Join-Path "$InstallPath" "config") -ErrorAction SilentlyContinue
+    if ($ConfFolder) {
         Write-Output "Remove item: $ConfFolder"
         Remove-Item $ConfFolder -Force -Recurse
     }
