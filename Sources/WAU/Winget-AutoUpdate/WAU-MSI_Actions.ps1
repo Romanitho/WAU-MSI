@@ -139,7 +139,7 @@ function Uninstall-WingetAutoUpdate {
     $ConfFolder = Get-Item (Join-Path "$InstallPath" "config")
     if ($AppLists) {
         Write-Output "Remove item: $ConfFolder"
-        Remove-Item $ConfFolder -Force
+        Remove-Item $ConfFolder -Force -Recurse
     }
 
     Write-Host "Uninstallation done!`n"
