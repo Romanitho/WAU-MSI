@@ -385,7 +385,7 @@ foreach ($platform in $platforms) {
         <CustomAction Id="CA_PowerShell_Install" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no" />
         <CustomAction Id="CA_PowerShell_Uninstall" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="ignore" Impersonate="no" />
         <InstallExecuteSequence>
-            <Custom Action="StartWAU_Checkbox" After="InstallFinalize">RUN_WAU="YES"</Custom>
+            <Custom Action="StartWAU" After="InstallFinalize">RUN_WAU="YES"</Custom>
             <Custom Action="CA_PowerShell_Install" Before="InstallFinalize">NOT (REMOVE="ALL")</Custom>
             <Custom Action="CA_PowerShell_Uninstall" Before="RemoveFiles">REMOVE="ALL"</Custom>
         </InstallExecuteSequence>
