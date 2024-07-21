@@ -118,6 +118,7 @@ foreach ($platform in $platforms) {
         <Condition Message="You must have PowerShell 5.0 or higher."><![CDATA[Installed OR POWERSHELLEXE]]></Condition>
 
         <!-- WAU Properties Config -->
+		<Property Id="RUN_WAU" Value="NO" />
         <Property Id="NOTIFICATIONLEVEL" Secure="yes" />
         <Property Id="NOTIFICATIONLEVEL_VALUE" Value="Full">
             <RegistrySearch Id="SearchNotificationLevel" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_NotificationLevel" Win64="$platformWin64" />
@@ -281,7 +282,7 @@ foreach ($platform in $platforms) {
             <DialogRef Id="UserExit" />
             <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
             <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
-            <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="StartWAU_Checkbox" Order="1">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+            <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="StartWAU" Order="1">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
             <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
             <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
             <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
@@ -380,10 +381,11 @@ foreach ($platform in $platforms) {
         <SetProperty Id="CA_PowerShell_Uninstall" Before="CA_PowerShell_Uninstall" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; -Uninstall -InstallPath &quot;[INSTALLDIR]" />
 
         <!-- Custom Actions -->
-        <CustomAction Id="StartWAU_Checkbox" Impersonate="yes" ExeCommand="schtasks /run /tn WAU\Winget-AutoUpdate" Directory="INSTALLDIR" Return="ignore" />
+        <CustomAction Id="StartWAU" Impersonate="yes" ExeCommand="schtasks /run /tn WAU\Winget-AutoUpdate" Directory="INSTALLDIR" Return="ignore" />
         <CustomAction Id="CA_PowerShell_Install" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no" />
         <CustomAction Id="CA_PowerShell_Uninstall" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="ignore" Impersonate="no" />
         <InstallExecuteSequence>
+			<Custom Action="StartWAU" After="InstallFinalize">RUN_WAU="YES"></Custom>
             <Custom Action="CA_PowerShell_Install" Before="InstallFinalize">NOT (REMOVE="ALL")</Custom>
             <Custom Action="CA_PowerShell_Uninstall" Before="RemoveFiles">REMOVE="ALL"</Custom>
         </InstallExecuteSequence>

@@ -20,7 +20,7 @@ function Update-WAU {
 
         #Update WAU
         Write-ToLog "Updating WAU..." "Yellow"
-        Start-Process msiexec.exe -ArgumentList "/i $MsiFile /passive /l ""$WorkingDir\logs\WAU-Installer.log"" WIXUI_EXITDIALOGOPTIONALCHECKBOX=1"
+        Start-Process msiexec.exe -ArgumentList "/i $MsiFile /passive /l ""$WorkingDir\logs\WAU-Installer.log"" RUN_WAU=YES"
 
         exit
 
