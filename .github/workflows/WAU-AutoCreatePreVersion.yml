@@ -89,7 +89,7 @@ jobs:
           echo " - WAU.msi SHA256: $MsiSHA"
           echo "MSI_SHA=$MsiSHA" >> $env:GITHUB_ENV
           #$MsiX86HA = (Get-FileHash .\WAU_x86.msi).hash
-          #echo " - WAU.msi SHA256: $MsiX86HA"
+          #echo " - WAU_x86.msi SHA256: $MsiX86HA"
           #echo "MSI_SHA_X86=$MsiX86HA" >> $env:GITHUB_ENV
 
           echo "### Zip ADMX ###"
@@ -107,7 +107,7 @@ jobs:
           generateReleaseNotes: true
           name: "v${{ steps.versioning.outputs.version }} [Nightly Build]"
           artifacts: "WAU.msi,WAU_ADMX.zip,WAU_InstallCounter"
-          body: "MSI SHA: ${{ env.MSI_SHA }}"
+          body: "WAU.msi SHA256: ${{ env.MSI_SHA }}"
 
       - name: URL to release
         run: echo "Release -> ${{ steps.release.outputs.html_url }}"
