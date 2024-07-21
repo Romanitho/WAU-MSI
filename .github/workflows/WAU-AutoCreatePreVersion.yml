@@ -85,11 +85,12 @@ jobs:
           #.\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\Winget-AutoUpdate_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
 
           echo "### Get file SHA ###"
-          $MsiSHA = (Get-FileHash .\WAU.msi | select Algorithm, Hash | ft -HideTableHeaders)
-          echo " - WAU.msi: $MsiSHA"
+          $MsiSHA = (Get-FileHash .\WAU.msi).hash
+          echo " - WAU.msi SHA256: $MsiSHA"
           echo "MSI_SHA=$MsiSHA" >> $env:GITHUB_ENV
-          #echo " - WAU_x86.msi:"
-          #Get-FileHash .\WAU_x86.msi | select Algorithm, Hash | ft -HideTableHeaders
+          #$MsiX86HA = (Get-FileHash .\WAU_x86.msi).hash
+          #echo " - WAU.msi SHA256: $MsiX86HA"
+          #echo "MSI_SHA_X86=$MsiX86HA" >> $env:GITHUB_ENV
 
           echo "### Zip ADMX ###"
           Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
