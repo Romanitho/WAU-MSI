@@ -51,20 +51,21 @@ jobs:
           Start-Process .\MicrosoftDeploymentToolkit_x64.msi -ArgumentList "/quiet /norestart" -Wait
 
           echo "### Duplicate WAU to WAU_x86 and WAU_x64"
-          Copy-Item -Path ".\Sources\WAU" -Destination ".\Sources\WAU_x64" -Recurse -Force
-          #Copy-Item -Path ".\Sources\WAU" -Destination ".\Sources\WAU_x86" -Recurse -Force
+          Copy-Item -Path ".\Sources\Winget-AutoUpdate" -Destination ".\Sources\Winget-AutoUpdate_x64" -Recurse -Force
+          #Copy-Item -Path ".\Sources\Winget-AutoUpdate" -Destination ".\Sources\Winget-AutoUpdate_x86" -Recurse -Force
 
           echo "### Copy ServiceUI.exe (x64/x86) to 'Sources/WAU_(x86/x64)/Winget-AutoUpdate' folders ###"
-          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\WAU_x64\Winget-AutoUpdate\ServiceUI.exe" -Force
-          #Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\WAU_x86\Winget-AutoUpdate\ServiceUI.exe" -Force
+          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate_x64\ServiceUI.exe" -Force
+          #Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate_x86\ServiceUI.exe" -Force
 
           echo "### Create WAU msi ###"
-          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x64\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
-          #.\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\WAU_x86\Winget-AutoUpdate" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
+          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\Winget-AutoUpdate_x64" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
+          #.\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\Winget-AutoUpdate_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
 
           echo "### Get file SHA ###"
-          echo " - WAU.msi:"
-          Get-FileHash .\WAU.msi | select Algorithm, Hash | ft -HideTableHeaders
+          $MsiSHA = (Get-FileHash .\WAU.msi | select Algorithm, Hash | ft -HideTableHeaders)
+          echo " - WAU.msi: $MsiSHA"
+          echo "MSI_SHA=$MsiSHA" >> $env:GITHUB_ENV
           #echo " - WAU_x86.msi:"
           #Get-FileHash .\WAU_x86.msi | select Algorithm, Hash | ft -HideTableHeaders
 
@@ -83,3 +84,4 @@ jobs:
           generateReleaseNotes: true
           name: "v${{ steps.versioning.outputs.version }}"
           artifacts: "WAU.msi,WAU_ADMX.zip,WAU_InstallCounter"
+          body: "MSI SHA: ${{ env.MSI_SHA }}"

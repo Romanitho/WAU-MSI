@@ -1,7 +1,7 @@
 [Cmdletbinding()]
 Param(
     [Parameter(Mandatory = $false, Position = 0)]  [string] $Path = (Get-Location).Path,
-    [Parameter(Mandatory = $false)]  [string] $Sources = "$($Path)\Sources\WAU\Winget-AutoUpdate\",
+    [Parameter(Mandatory = $false)]  [string] $Sources = "$($Path)\Sources\Winget-AutoUpdate\",
     [Parameter(Mandatory = $false)]  [string] $OutputFolder = $Path,
     [Parameter(Mandatory = $false)]  [string] $IconFile = "$($Path)\Sources\Wix\files\icon.ico",
     [Parameter(Mandatory = $false)]  [string] $BannerFile = "$($Path)\Sources\Wix\files\banner.bmp",
