@@ -32,14 +32,6 @@ $heatExe = Join-Path $wixDir "heat.exe"
 $candleExe = Join-Path $wixDir "candle.exe"
 $lightExe = Join-Path $wixDir "light.exe"
 
-if ($PreRelease) {
-	$Comment = "NIGHTLY"
-	$UpdatePreRelease = "#1"
-}
-else {
-	$Comment = "STABLE"
-	$UpdatePreRelease = "#0"
-}
 
 # Platform settings
 $platforms = @()
@@ -84,6 +76,14 @@ foreach ($platform in $platforms) {
 	$modulesWixobj = Join-Path $Path "_modules${platformArch}.wixobj"
 	$productWixobj = Join-Path $Path ".wixobj${platformArch}"
 
+	if ($PreRelease) {
+		$Comment = "NIGHTLY, $platformArch"
+		$UpdatePreRelease = "#1"
+	}
+	else {
+		$Comment = "STABLE, $platformArch"
+		$UpdatePreRelease = "#0"
+	}
 
 	# Build XML
 	$wixXml = [xml] @"
