@@ -370,11 +370,11 @@ foreach ($platform in $platforms) {
         <SetProperty Id="LISTPATH_VALUE" After="AppSearch" Value="[LISTPATH]">LISTPATH</SetProperty>
         <SetProperty Id="MODPATH_VALUE" After="AppSearch" Value="[MODPATH]">MODPATH</SetProperty>
         <SetProperty Id="AZUREBLOBURL_VALUE" After="AppSearch" Value="[AZUREBLOBURL]">AZUREBLOBURL</SetProperty>
-        <SetProperty Id="DONOTRUNONMETERED_VALUE" After="AppSearch" Value="&quot;#[DONOTRUNONMETERED]&quot;">DONOTRUNONMETERED</SetProperty>
+        <SetProperty Id="DONOTRUNONMETERED_VALUE" After="AppSearch" Value="#[DONOTRUNONMETERED]">DONOTRUNONMETERED</SetProperty>
         <SetProperty Id="UPDATESATTIME_VALUE" After="AppSearch" Value="[UPDATESATTIME]">UPDATESATTIME</SetProperty>
-        <SetProperty Id="BYPASSLISTFORUSERS_VALUE" After="AppSearch" Value="&quot;#[BYPASSLISTFORUSERS]&quot;">BYPASSLISTFORUSERS</SetProperty>
-        <SetProperty Id="MAXLOGFILES_VALUE" After="AppSearch" Value="&quot;#[MAXLOGFILES]&quot;">MAXLOGFILES</SetProperty>
-        <SetProperty Id="MAXLOGSIZE_VALUE" After="AppSearch" Value="&quot;#[MAXLOGSIZE]&quot;">MAXLOGSIZE</SetProperty>
+        <SetProperty Id="BYPASSLISTFORUSERS_VALUE" After="AppSearch" Value="#[BYPASSLISTFORUSERS]">BYPASSLISTFORUSERS</SetProperty>
+        <SetProperty Id="MAXLOGFILES_VALUE" After="AppSearch" Value="#[MAXLOGFILES]">MAXLOGFILES</SetProperty>
+        <SetProperty Id="MAXLOGSIZE_VALUE" After="AppSearch" Value="#[MAXLOGSIZE]">MAXLOGSIZE</SetProperty>
         <SetProperty Action="SetUPDATEPRERELEASE_0" Id="UPDATEPRERELEASE" After="AppSearch" Value="0"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_REG <> "#1")]]></SetProperty>
         <SetProperty Action="SetUPDATEPRERELEASE_1" Id="UPDATEPRERELEASE" After="AppSearch" Value="1"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_REG = "#1")]]></SetProperty>
         <SetProperty Id="CA_PowerShell_Install" Before="CA_PowerShell_Install" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; &quot;[B_W_LIST_PATH]&quot; -InstallPath &quot;[INSTALLDIR]" />
