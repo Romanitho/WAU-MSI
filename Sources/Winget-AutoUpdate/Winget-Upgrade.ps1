@@ -46,6 +46,7 @@ if ($IsSystem) {
                 }
                 #Rerun WAU in system context with ServiceUI
                 Start-Process "ServiceUI.exe" -ArgumentList "-process:explorer.exe $env:windir\System32\wscript.exe Invisible.vbs ""\""powershell.exe -NoProfile -ExecutionPolicy Bypass -File winget-upgrade.ps1""\""" -WorkingDirectory $WorkingDir
+                Wait-Process "ServiceUI" -ErrorAction SilentlyContinue
                 Exit 0
             }
             else {
