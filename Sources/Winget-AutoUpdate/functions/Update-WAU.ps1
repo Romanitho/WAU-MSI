@@ -22,7 +22,7 @@ function Update-WAU {
         Write-ToLog "Updating WAU..." "Yellow"
         Start-Process msiexec.exe -ArgumentList "/i $MsiFile /passive /l ""$WorkingDir\logs\WAU-Installer.log"" RUN_WAU=YES"
 
-        exit
+        exit 0
 
     }
 
