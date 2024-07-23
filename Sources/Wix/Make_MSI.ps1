@@ -94,7 +94,7 @@ foreach ($platform in $platforms) {
     <Product Id="*" Language="1033" Name="$platformProductName" Version="$ProductVersion" Manufacturer="$Manufacturer" UpgradeCode="$platformUpgradeCode" >
 
         <!-- Package Config -->
-        <Package Id="*" Description="$ProductId ($platformArch) [$ProductVersion]" InstallPrivileges="elevated" Comments="$ProductName Installer" InstallerVersion="200" Compressed="yes" Platform="$platformArch"/>
+        <Package Id="*" Description="$ProductId ($platformArch) [$ProductVersion]" InstallPrivileges="elevated" Comments="$ProductName Installer" InstallerVersion="200" Compressed="yes" Platform="$platformArch" InstallScope="perMachine"/>
         <Icon Id="icon.ico" SourceFile="$IconFile"/>
         <WixVariable Id="WixUIBannerBmp" Value="$BannerFile"></WixVariable>
         <WixVariable Id="WixUIDialogBmp" Value="$DialogFile"></WixVariable>
