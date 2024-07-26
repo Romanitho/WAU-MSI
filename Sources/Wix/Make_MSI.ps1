@@ -189,6 +189,14 @@ foreach ($platform in $platforms) {
         <Property Id="UPDATEPRERELEASE_REG" Value="$UpdatePreRelease">
             <RegistrySearch Id="SearchUpdatePrerelease" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_UpdatePrerelease" Win64="$platformWin64" />
         </Property>
+        <Property Id="DESKTOPSHORTCUT" Secure="yes" />
+        <Property Id="DESKTOPSHORTCUT_VALUE" Value="#0">
+            <RegistrySearch Id="SearchDesktopShortcut" Type="raw" Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_DesktopShortcut" Win64="yes" />
+        </Property>
+        <Property Id="STARTMENUSHORTCUT" Secure="yes" />
+        <Property Id="STARTMENUSHORTCUT_VALUE" Value="#0">
+            <RegistrySearch Id="SearchStartMenuShortcut" Type="raw" Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_StartMenuShortcut" Win64="yes" />
+        </Property>
 
         <!-- Define a custom action -->
         <Directory Id="TARGETDIR" Name="SourceDir">
@@ -255,12 +263,36 @@ foreach ($platform in $platforms) {
                     </Component>
                 </Directory>
             </Directory>
+            <Directory Id="DesktopFolder" Name="DesktopFolder">
+                <Component Id="DesktopShortcut" Guid="*">
+                    <Condition>DESKTOPSHORTCUT = 1</Condition>
+                    <RegistryKey Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]">
+                        <RegistryValue Name="WAU_DesktopShortcut" Type="integer" Value="[DESKTOPSHORTCUT]" KeyPath="yes" />
+                    </RegistryKey>
+                    <Shortcut Id="DesktopShortcut" Name="Run WAU" Target="[System64Folder]schtasks.exe /run /tn \WAU\Winget-AutoUpdate" Icon="icon.ico" />
+                </Component>
+            </Directory>
+            <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
+                <Directory Id="Wau" Name="$ProductName">
+                    <Component Id="StartMenuShortcut" Guid="*">
+                        <Condition>STARTMENUSHORTCUT = 1</Condition>
+                        <RegistryKey Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]">
+                            <RegistryValue Name="WAU_StartMenuShortcut" Type="integer" Value="[STARTMENUSHORTCUT]" KeyPath="yes" />
+                        </RegistryKey>
+                        <Shortcut Id="StartMenuShortcut1" Name="Run WAU" Target="[System64Folder]schtasks.exe /run /tn \WAU\Winget-AutoUpdate" Icon="icon.ico" />
+                        <Shortcut Id="StartMenuShortcut2" Name="Open log" Target="[INSTALLDIR]updates.log" />
+                        <RemoveFolder Id="WAU" On="uninstall" />
+                    </Component>
+                </Directory>
+            </Directory>
         </Directory>
 
         <!-- WAU Features -->
         <Feature Id="$ProductId" Title="$ProductName" Level="1">
             <ComponentGroupRef Id="INSTALLDIR" />
             <ComponentRef Id="CompReg" />
+            <ComponentRef Id="DesktopShortcut" />
+            <ComponentRef Id="StartMenuShortcut" />
         </Feature>
 
         <!-- UI Config -->
@@ -304,10 +336,33 @@ foreach ($platform in $platforms) {
             <Property Id="ARPNOMODIFY" Value="1" />
 
             <!-- WAU Custome UI Config -->
-            <Dialog Id="WAUConfig" Width="370" Height="270" Title="Winget-AutoUpdate Setup">
-                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
-                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
-                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+            <Dialog Id="WAUInstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="FolderLabel" Type="Text" X="20" Y="60" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
+                <Control Id="Folder" Type="PathEdit" X="20" Y="100" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />
+                <Control Id="ChangeFolder" Type="PushButton" X="20" Y="120" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" />
+                <Control Id="WAUDesktopShortcut" Type="CheckBox" Width="155" Height="17" X="20" Y="180" Text="Install Desktop shortcut" Property="DESKTOPSHORTCUT_CHECKED" CheckBoxValue="1">
+                    <Publish Property="DESKTOPSHORTCUT" Value="1" Order="1">DESKTOPSHORTCUT_CHECKED</Publish>
+                    <Publish Property="DESKTOPSHORTCUT" Value="0" Order="2">NOT DESKTOPSHORTCUT_CHECKED</Publish>
+                </Control>
+                <Control Id="WAUStartMenuShortcut" Type="CheckBox" Width="155" Height="17" X="20" Y="200" Text="Install Start Menu shortcut" Property="STARTMENUSHORTCUT_CHECKED" CheckBoxValue="1">
+                    <Publish Property="STARTMENUSHORTCUT" Value="1" Order="1">STARTMENUSHORTCUT_CHECKED</Publish>
+                    <Publish Property="STARTMENUSHORTCUT" Value="0" Order="2">NOT STARTMENUSHORTCUT_CHECKED</Publish>
+                </Control>
+            </Dialog>
+            <Dialog Id="WAUConfig" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
                     <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
                 </Control>
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}WAU Configuration" />
@@ -352,6 +407,10 @@ foreach ($platform in $platforms) {
         <UIRef Id="WixUI_Common" />
 
         <!-- Set properties -->
+        <SetProperty Id="DESKTOPSHORTCUT_CHECKED" After="AppSearch" Value="1">DESKTOPSHORTCUT_VALUE = "#1"</SetProperty>
+        <SetProperty Id="DESKTOPSHORTCUT" After="AppSearch" Value="1"><![CDATA[(NOT DESKTOPSHORTCUT) AND (DESKTOPSHORTCUT_VALUE = "#1")]]></SetProperty>
+        <SetProperty Id="STARTMENUSHORTCUT_CHECKED" After="AppSearch" Value="1">STARTMENUSHORTCUT_VALUE = "#1"</SetProperty>
+        <SetProperty Id="STARTMENUSHORTCUT" After="AppSearch" Value="1"><![CDATA[(NOT STARTMENUSHORTCUT) AND (STARTMENUSHORTCUT_VALUE = "#1")]]></SetProperty>
         <SetProperty Id="NOTIFICATIONLEVEL_VALUE" After="AppSearch" Value="[NOTIFICATIONLEVEL]">NOTIFICATIONLEVEL</SetProperty>
         <SetProperty Action="SetUSERCONTEXT_0" Id="USERCONTEXT" After="AppSearch" Value="0"><![CDATA[(NOT USERCONTEXT) AND (USERCONTEXT_REG <> "#1")]]></SetProperty>
         <SetProperty Action="SetUSERCONTEXT_1" Id="USERCONTEXT" After="AppSearch" Value="1"><![CDATA[(NOT USERCONTEXT) AND (USERCONTEXT_REG = "#1")]]></SetProperty>
