@@ -23,7 +23,7 @@ function Update-WAU {
         Start-Process msiexec.exe -ArgumentList "/i $MsiFile /passive /l ""$WorkingDir\logs\WAU-Installer.log"" RUN_WAU=YES" -Wait
 
         #Send success Notif
-        Write-ToLog "WAU Update completed." "Green"
+        Write-ToLog "WAU Update completed. Rerunning WAU..." "Green"
         $Title = $NotifLocale.local.outputs.output[3].title -f "Winget-AutoUpdate"
         $Message = $NotifLocale.local.outputs.output[3].message -f $WAUAvailableVersion
         $MessageType = "success"
