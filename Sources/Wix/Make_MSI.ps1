@@ -191,11 +191,11 @@ foreach ($platform in $platforms) {
         </Property>
         <Property Id="DESKTOPSHORTCUT" Secure="yes" />
         <Property Id="DESKTOPSHORTCUT_VALUE" Value="#0">
-            <RegistrySearch Id="SearchDesktopShortcut" Type="raw" Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_DesktopShortcut" Win64="yes" />
+            <RegistrySearch Id="SearchDesktopShortcut" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_DesktopShortcut" Win64="yes" />
         </Property>
         <Property Id="STARTMENUSHORTCUT" Secure="yes" />
         <Property Id="STARTMENUSHORTCUT_VALUE" Value="#0">
-            <RegistrySearch Id="SearchStartMenuShortcut" Type="raw" Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_StartMenuShortcut" Win64="yes" />
+            <RegistrySearch Id="SearchStartMenuShortcut" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_StartMenuShortcut" Win64="yes" />
         </Property>
 
         <!-- Define a custom action -->
@@ -259,6 +259,12 @@ foreach ($platform in $platforms) {
                         </RegistryKey>
                         <RegistryKey Key="AppUserModelId\Windows.SystemToast.Winget.Notification" Root="HKCR">
                             <RegistryValue Name="IconUri" Type="string" Value="%SystemRoot%\system32\@WindowsUpdateToastIcon.png" />
+                        </RegistryKey>
+                        <RegistryKey Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]">
+                            <RegistryValue Name="WAU_DesktopShortcut" Type="integer" Value="[DESKTOPSHORTCUT]" />
+                        </RegistryKey>
+                        <RegistryKey Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]">
+                            <RegistryValue Name="WAU_StartMenuShortcut" Type="integer" Value="[STARTMENUSHORTCUT]" />
                         </RegistryKey>
                     </Component>
                 </Directory>
