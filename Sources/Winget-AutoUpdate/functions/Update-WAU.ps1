@@ -22,11 +22,6 @@ function Update-WAU {
         Write-ToLog "Updating WAU..." "Yellow"
         Start-Process msiexec.exe -ArgumentList "/i $MsiFile /passive /l ""$WorkingDir\logs\WAU-Installer.log"" RUN_WAU=YES" -Wait
 
-        #Kill ServiceUI if running
-        if (Get-Process "ServiceUI"){
-            Stop-Process "ServiceUI" -Force
-        }
-
         #Send success Notif
         Write-ToLog "WAU Update completed." "Green"
         $Title = $NotifLocale.local.outputs.output[3].title -f "Winget-AutoUpdate"
