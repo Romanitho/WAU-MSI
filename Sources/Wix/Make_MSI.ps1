@@ -414,8 +414,10 @@ foreach ($platform in $platforms) {
 
         <!-- Set properties -->
         <SetProperty Id="DESKTOPSHORTCUT_CHECKED" After="AppSearch" Value="1">DESKTOPSHORTCUT_VALUE = "#1"</SetProperty>
+        <SetProperty Id="DESKTOPSHORTCUT" After="AppSearch" Value="0"><![CDATA[(NOT DESKTOPSHORTCUT) AND (DESKTOPSHORTCUT_VALUE <> "#1")]]></SetProperty>
         <SetProperty Id="DESKTOPSHORTCUT" After="AppSearch" Value="1"><![CDATA[(NOT DESKTOPSHORTCUT) AND (DESKTOPSHORTCUT_VALUE = "#1")]]></SetProperty>
         <SetProperty Id="STARTMENUSHORTCUT_CHECKED" After="AppSearch" Value="1">STARTMENUSHORTCUT_VALUE = "#1"</SetProperty>
+        <SetProperty Id="STARTMENUSHORTCUT" After="AppSearch" Value="0"><![CDATA[(NOT STARTMENUSHORTCUT) AND (STARTMENUSHORTCUT_VALUE <> "#1")]]></SetProperty>
         <SetProperty Id="STARTMENUSHORTCUT" After="AppSearch" Value="1"><![CDATA[(NOT STARTMENUSHORTCUT) AND (STARTMENUSHORTCUT_VALUE = "#1")]]></SetProperty>
         <SetProperty Id="NOTIFICATIONLEVEL_VALUE" After="AppSearch" Value="[NOTIFICATIONLEVEL]">NOTIFICATIONLEVEL</SetProperty>
         <SetProperty Action="SetUSERCONTEXT_0" Id="USERCONTEXT" After="AppSearch" Value="0"><![CDATA[(NOT USERCONTEXT) AND (USERCONTEXT_REG <> "#1")]]></SetProperty>
