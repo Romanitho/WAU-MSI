@@ -107,7 +107,10 @@ jobs:
           generateReleaseNotes: true
           name: "v${{ steps.versioning.outputs.version }} [Nightly Build]"
           artifacts: "WAU.msi,WAU_ADMX.zip,WAU_InstallCounter"
-          body: "WAU.msi SHA256: ${{ env.MSI_SHA }}"
+          body: |
+            > |File|Hash (SHA256)|
+            > |---|---|
+            > |WAU.msi|${{ env.MSI_SHA }}|
 
       - name: URL to release
         run: echo "Release -> ${{ steps.release.outputs.html_url }}"
