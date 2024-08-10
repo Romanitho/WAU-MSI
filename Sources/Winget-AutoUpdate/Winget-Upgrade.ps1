@@ -45,7 +45,7 @@ if ($IsSystem) {
                     $null = (New-Item "$WorkingDir\logs\symlink.txt" -Value $symLink -Force)
                 }
                 #Rerun WAU in system context with ServiceUI
-                Start-Process "ServiceUI.exe" -ArgumentList "-process:explorer.exe $env:windir\System32\wscript.exe Invisible.vbs ""\""powershell.exe -NoProfile -ExecutionPolicy Bypass -File winget-upgrade.ps1""\""" -WorkingDirectory $WorkingDir
+                Start-Process "ServiceUI.exe" -ArgumentList "-process:explorer.exe $env:windir\System32\conhost.exe --headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File winget-upgrade.ps1" -WorkingDirectory $WorkingDir
                 Wait-Process "ServiceUI" -ErrorAction SilentlyContinue
                 Exit 0
             }
@@ -368,20 +368,7 @@ if (Test-Network) {
             #Run WAU in user context if feature is activated
             if ($WAUConfig.WAU_UserContext -eq 1) {
 
-                #Create User context task if not existing
                 $UserContextTask = Get-ScheduledTask -TaskName 'Winget-AutoUpdate-UserContext' -ErrorAction SilentlyContinue
-                if (!$UserContextTask) {
-                    #Create the scheduled task in User context
-                    $taskAction = New-ScheduledTaskAction -Execute "wscript.exe" -Argument "`"$($WAUConfig.InstallLocation)\Invisible.vbs`" `"powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"`"`"$($WAUConfig.InstallLocation)\winget-upgrade.ps1`"`""
-                    $taskUserPrincipal = New-ScheduledTaskPrincipal -GroupId S-1-5-11
-                    $taskSettings = New-ScheduledTaskSettingsSet -Compatibility Win8 -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 03:00:00
-                    $task = New-ScheduledTask -Action $taskAction -Principal $taskUserPrincipal -Settings $taskSettings
-                    Register-ScheduledTask -TaskName 'Winget-AutoUpdate-UserContext' -TaskPath 'WAU' -InputObject $task -Force | Out-Null
-                    Write-ToLog "-> User Context task created."
-
-                    #Load it
-                    $UserContextTask = Get-ScheduledTask -TaskName 'Winget-AutoUpdate-UserContext' -ErrorAction SilentlyContinue
-                }
 
                 $explorerprocesses = @(Get-CimInstance -Query "SELECT * FROM Win32_Process WHERE Name='explorer.exe'" -ErrorAction SilentlyContinue)
                 If ($explorerprocesses.Count -eq 0) {
