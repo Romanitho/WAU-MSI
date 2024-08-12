@@ -62,7 +62,7 @@ jobs:
           .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\Winget-AutoUpdate_x64" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
           #.\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\Winget-AutoUpdate_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
 
-          echo "### Get file SHA ###"
+          echo "### Get MSI file SHA ###"
           $MsiSHA = (Get-FileHash .\WAU.msi).hash
           echo " - WAU.msi SHA256: $MsiSHA"
           echo "MSI_SHA=$MsiSHA" >> $env:GITHUB_ENV
@@ -72,6 +72,11 @@ jobs:
 
           echo "### Zip ADMX ###"
           Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
+
+          echo "### Get ADMX zip SHA ###"
+          $ADMXSHA = (Get-FileHash .\WAU_ADMX.zip).hash
+          echo " - WAU_ADMX.zip SHA256: $ADMXSHA"
+          echo "ADMX_SHA=$ADMXSHA" >> $env:GITHUB_ENV
 
           echo "### Create install counter file ###"
           echo "Install counter file." > WAU_InstallCounter
@@ -89,6 +94,7 @@ jobs:
             > |File|Hash (SHA256)|
             > |---|---|
             > |WAU.msi|${{ env.MSI_SHA }}|
+            > |WAU_ADMX.zip|${{ env.ADMXSHA }}|
 
 
       - name: URL to release

@@ -275,7 +275,7 @@ foreach ($platform in $platforms) {
                     <RegistryKey Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]">
                         <RegistryValue Name="WAU_DesktopShortcut" Type="integer" Value="[DESKTOPSHORTCUT]" KeyPath="yes" />
                     </RegistryKey>
-                    <Shortcut Id="DesktopShortcut" Name="Run WAU" Target="[System64Folder]schtasks.exe" Arguments="-run -tn WAU\Winget-AutoUpdate" Icon="icon.ico" />
+                    <Shortcut Id="DesktopShortcut" Name="Run WAU" Target="[System64Folder]conhost.exe" Arguments="--headless [System64Folder]schtasks.exe -run -tn WAU\Winget-AutoUpdate" Icon="icon.ico" />
                 </Component>
             </Directory>
             <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
