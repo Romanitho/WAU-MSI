@@ -93,7 +93,7 @@ jobs:
           body: |
             |Files|Hash (SHA256)|
             |---|---|
-            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU.msi)|${{ env.MSI_SHA }}|
+            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU.msi) (x64 only)|${{ env.MSI_SHA }}|
             |[WAU_ADMX.zip](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU_ADMX.zip)|${{ env.ADMX_SHA }}|
 
 
