@@ -116,7 +116,7 @@ jobs:
             > |File|Hash (SHA256)|
             > |---|---|
             > |WAU.msi|${{ env.MSI_SHA }}|
-            > |WAU_ADMX.zip|${{ env.ADMXSHA }}|
+            > |WAU_ADMX.zip|${{ env.ADMX_SHA }}|
 
       - name: URL to release
         run: echo "Release -> ${{ steps.release.outputs.html_url }}"
