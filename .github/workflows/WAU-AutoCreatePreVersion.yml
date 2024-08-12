@@ -113,10 +113,10 @@ jobs:
           name: "v${{ steps.versioning.outputs.version }} [Nightly Build]"
           artifacts: "WAU.msi,WAU_ADMX.zip,WAU_InstallCounter"
           body: |
-            > |File|Hash (SHA256)|
-            > |---|---|
-            > |WAU.msi|${{ env.MSI_SHA }}|
-            > |WAU_ADMX.zip|${{ env.ADMX_SHA }}|
+            |Files|Hash (SHA256)|
+            |---|---|
+            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU.msi)|${{ env.MSI_SHA }}|
+            |[WAU_ADMX.zip](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU_ADMX.zip)|${{ env.ADMX_SHA }}|
 
       - name: URL to release
         run: echo "Release -> ${{ steps.release.outputs.html_url }}"
