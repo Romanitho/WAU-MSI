@@ -16,7 +16,7 @@ Write-Output "Uninstall:   $Uninstall"
 
 function Install-WingetAutoUpdate {
 
-    Write-Host "Post install actions:"
+    Write-Host "### Post install actions ###"
 
     try {
 
@@ -30,6 +30,7 @@ function Install-WingetAutoUpdate {
 
         #Get WAU config
         $WAUconfig = Get-ItemProperty "HKLM:\SOFTWARE\Romanitho\Winget-AutoUpdate"
+        Write-Output "-> WAU Config:"
         Write-Output $WAUconfig
 
         # Settings for the scheduled task for Updates (System)
@@ -100,6 +101,7 @@ function Install-WingetAutoUpdate {
 
         #Copy App list to install folder (exept on self update)
         if ($AppListPath -notlike "$InstallPath*") {
+            Write-Output "-> Copying $AppListPath to $InstallPath"
             Copy-Item -Path $AppListPath -Destination $InstallPath
         }
 
@@ -111,18 +113,18 @@ function Install-WingetAutoUpdate {
             Write-Host "-> Not able to report installation."
         }
 
-        Write-Host "-> WAU MSI Post actions succeeded!`n"
+        Write-Host "### WAU MSI Post actions succeeded! ###"
 
     }
     catch {
-        Write-Host "-> WAU Installation failed! Error $_.`n"
+        Write-Host "### WAU Installation failed! Error $_. ###"
         return $False
     }
 }
 
 function Uninstall-WingetAutoUpdate {
 
-    Write-Host "Uninstalling WAU started!"
+    Write-Host "### Uninstalling WAU started! ###"
 
     Write-Host "-> Removing scheduled tasks."
     Get-ScheduledTask -TaskName "Winget-AutoUpdate" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
@@ -130,10 +132,13 @@ function Uninstall-WingetAutoUpdate {
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-UserContext" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-Policies" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
 
-    $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") -ErrorAction SilentlyContinue
-    if ($AppLists) {
-        Write-Output "Remove item: $AppLists"
-        Remove-Item $AppLists -Force
+    #If not upgrade, remove app list
+    if ($AppListPath -notlike "$InstallPath*") {
+        $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") -ErrorAction SilentlyContinue
+        if ($AppLists) {
+            Write-Output "Remove item: $AppLists"
+            Remove-Item $AppLists -Force
+        }
     }
 
     $ConfFolder = Get-Item (Join-Path "$InstallPath" "config") -ErrorAction SilentlyContinue
@@ -142,7 +147,7 @@ function Uninstall-WingetAutoUpdate {
         Remove-Item $ConfFolder -Force -Recurse
     }
 
-    Write-Host "Uninstallation done!`n"
+    Write-Host "### Uninstallation done! ###"
     Start-sleep 1
 }
 
