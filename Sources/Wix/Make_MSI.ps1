@@ -285,7 +285,7 @@ foreach ($platform in $platforms) {
                         <RegistryKey Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]">
                             <RegistryValue Name="WAU_StartMenuShortcut" Type="integer" Value="[STARTMENUSHORTCUT]" KeyPath="yes" />
                         </RegistryKey>
-                        <Shortcut Id="StartMenuShortcut1" Name="Run WAU" Target="[System64Folder]schtasks.exe" Arguments="-run -tn WAU\Winget-AutoUpdate" Icon="icon.ico" />
+                        <Shortcut Id="StartMenuShortcut1" Name="Run WAU" Target="[System64Folder]conhost.exe" Arguments="--headless [System64Folder]schtasks.exe -run -tn WAU\Winget-AutoUpdate" Icon="icon.ico" />
                         <Shortcut Id="StartMenuShortcut2" Name="Open log" Target="[INSTALLDIR]logs\updates.log" />
                         <RemoveFolder Id="WAU" On="uninstall" />
                     </Component>
@@ -448,7 +448,7 @@ foreach ($platform in $platforms) {
         <SetProperty Id="CA_PowerShell_Uninstall" Before="CA_PowerShell_Uninstall" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; &quot;[B_W_LIST_PATH]&quot; -InstallPath &quot;[INSTALLDIR] -Uninstall" />
 
         <!-- Custom Actions -->
-        <CustomAction Id="StartWAU" Impersonate="yes" ExeCommand="schtasks /run /tn WAU\Winget-AutoUpdate" Directory="INSTALLDIR" Return="ignore" />
+        <CustomAction Id="StartWAU" Impersonate="yes" ExeCommand="conhost.exe --headless schtasks /run /tn WAU\Winget-AutoUpdate" Directory="INSTALLDIR" Return="ignore" />
         <CustomAction Id="CA_PowerShell_Install" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no" />
         <CustomAction Id="CA_PowerShell_Uninstall" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="ignore" Impersonate="no" />
         <InstallExecuteSequence>
