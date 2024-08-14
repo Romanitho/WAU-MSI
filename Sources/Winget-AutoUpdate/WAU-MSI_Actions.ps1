@@ -109,6 +109,7 @@ function Install-WingetAutoUpdate {
         #Add 1 to counter file
         try {
             Invoke-RestMethod -Uri "https://github.com/Romanitho/WAU-MSI/releases/download/v$($WAUconfig.ProductVersion)/WAU_InstallCounter" | Out-Null
+            Write-Host "-> Reported installation."
         }
         catch {
             Write-Host "-> Not able to report installation."
@@ -161,9 +162,17 @@ function Uninstall-WingetAutoUpdate {
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $Script:ProgressPreference = 'SilentlyContinue'
 
-if (-not $Uninstall) {
+
+# Repair
+if ((-not $Uninstall) -and ($Upgrade -notlike "Code:{*}")) {
+    Uninstall-WingetAutoUpdate
     Install-WingetAutoUpdate
 }
-else {
+# Uninstall
+elseif ($Uninstall) {
     Uninstall-WingetAutoUpdate
+}
+# Install
+else {
+    Install-WingetAutoUpdate
 }
