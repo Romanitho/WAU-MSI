@@ -2,14 +2,18 @@
 param(
     [Parameter(Mandatory = $false)] [string] $AppListPath,
     [Parameter(Mandatory = $false)] [string] $InstallPath,
+    [Parameter(Mandatory = $false)] [string] $Upgrade,
     [Parameter(Mandatory = $False)] [Switch] $Uninstall = $false
 )
 
+#Remove the dummy prefix used for empty string argument:
+$Upgrade = $Upgrade.Replace("UP:", "")
 
 #For troubleshooting
-Write-Output "AppListPath: $AppListPath"
-Write-Output "InstallPath: $InstallPath"
-Write-Output "Uninstall:   $Uninstall"
+Write-Output "AppListPath:  [$AppListPath]"
+Write-Output "InstallPath:  [$InstallPath]"
+Write-Output "Upgrade:      [$Upgrade]"
+Write-Output "Uninstall:    [$Uninstall]"
 
 
 <# FUNCTIONS #>
@@ -122,7 +126,7 @@ function Install-WingetAutoUpdate {
     }
 }
 
-function Uninstall-WingetAutoUpdate {
+function Uninstall-WingetAutoUpdate ([Switch] $Upgrade) {
 
     Write-Host "### Uninstalling WAU started! ###"
 
@@ -133,7 +137,7 @@ function Uninstall-WingetAutoUpdate {
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-Policies" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
 
     #If not upgrade, remove app list
-    if ($AppListPath -notlike "$InstallPath*") {
+    if (-not $Upgrade) {
         $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") -ErrorAction SilentlyContinue
         if ($AppLists) {
             Write-Output "Remove item: $AppLists"
@@ -158,6 +162,9 @@ $Script:ProgressPreference = 'SilentlyContinue'
 
 if (-not $Uninstall) {
     Install-WingetAutoUpdate
+}
+elseif ($Upgrade) {
+    Uninstall-WingetAutoUpdate -Upgrade
 }
 else {
     Uninstall-WingetAutoUpdate
