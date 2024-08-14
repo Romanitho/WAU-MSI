@@ -4,7 +4,7 @@ function Get-ExcludedApps {
 
     $AppIDs = @()
 
-    #region blacklist in registry
+    #blacklist in registry
     if ($GPOList) {
 
         if (Test-Path "HKLM:\SOFTWARE\Policies\Romanitho\Winget-AutoUpdate\BlackList") {
@@ -16,21 +16,20 @@ function Get-ExcludedApps {
 
         }
 
-    }     
-    #endregion blacklist in registry
-    #region blacklist pulled from URI
+    }
+    #blacklist pulled from URI
     elseif ($URIList) {
 
         $RegPath = "$WAU_GPORoot";
         $RegValueName = 'WAU_URIList';
-        
+
         if (Test-Path -Path $RegPath) {
             $RegKey = Get-Item -Path $RegPath;
             $WAUURI = $RegKey.GetValue($RegValueName);
             if ($null -ne $WAUURI) {
                 $resp = Invoke-WebRequest -Uri $WAUURI -UseDefaultCredentials;
                 if ($resp.BaseResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK) {
-                    $resp.Content.Split([System.Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries) | 
+                    $resp.Content.Split([System.Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries) |
                     ForEach-Object {
                         $AppIds += $_
                     }
@@ -39,10 +38,16 @@ function Get-ExcludedApps {
         }
 
     }
-    #endregion blacklist pulled from URI
+    #blacklist pulled from local file
     elseif (Test-Path "$WorkingDir\excluded_apps.txt") {
 
         return (Get-Content -Path "$WorkingDir\excluded_apps.txt").Trim() | Where-Object { $_.length -gt 0 }
+
+    }
+    #blacklist pulled from default file
+    elseif (Test-Path "$WorkingDir\default_excluded_apps.txt") {
+
+        return (Get-Content -Path "$WorkingDir\default_excluded_apps.txt").Trim() | Where-Object { $_.length -gt 0 }
 
     }
 
