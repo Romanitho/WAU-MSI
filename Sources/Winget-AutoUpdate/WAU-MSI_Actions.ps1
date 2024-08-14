@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $false, Position = 0)] [string] $AppListPath,
+    [Parameter(Mandatory = $false)] [string] $AppListPath,
     [Parameter(Mandatory = $false)] [string] $InstallPath,
     [Parameter(Mandatory = $False)] [Switch] $Uninstall = $false
 )
@@ -20,11 +20,11 @@ function Install-WingetAutoUpdate {
 
     try {
 
-        # Clean potential old install
+        # Clean potential old v1 install
         $OldConfRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Winget-AutoUpdate"
         $OldWAUConfig = Get-ItemProperty $OldConfRegPath -ErrorAction SilentlyContinue
         if ($OldWAUConfig.UninstallString) {
-            Write-Host "-> Cleanning old WAU version ($($OldWAUConfig.DisplayVersion))"
+            Write-Host "-> Cleanning old v1 WAU version ($($OldWAUConfig.DisplayVersion))"
             Start-Process cmd.exe -ArgumentList "/c $($OldWAUConfig.UninstallString)" -Wait
         }
 
