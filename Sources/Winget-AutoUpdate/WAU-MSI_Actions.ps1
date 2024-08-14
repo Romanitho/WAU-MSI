@@ -10,10 +10,10 @@ param(
 $Upgrade = $Upgrade.Replace("UP:", "")
 
 #For troubleshooting
-Write-Output "AppListPath:  [$AppListPath]"
-Write-Output "InstallPath:  [$InstallPath]"
-Write-Output "Upgrade:      [$Upgrade]"
-Write-Output "Uninstall:    [$Uninstall]"
+Write-Output "AppListPath:  $AppListPath"
+Write-Output "InstallPath:  $InstallPath"
+Write-Output "Upgrade:      $Upgrade"
+Write-Output "Uninstall:    $Uninstall"
 
 
 <# FUNCTIONS #>
@@ -140,14 +140,14 @@ function Uninstall-WingetAutoUpdate ([Switch] $Upgrade) {
     if (-not $Upgrade) {
         $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") -ErrorAction SilentlyContinue
         if ($AppLists) {
-            Write-Output "Remove item: $AppLists"
+            Write-Output "-> Removing items: $AppLists"
             Remove-Item $AppLists -Force
         }
     }
 
     $ConfFolder = Get-Item (Join-Path "$InstallPath" "config") -ErrorAction SilentlyContinue
     if ($ConfFolder) {
-        Write-Output "Remove item: $ConfFolder"
+        Write-Output "-> Removing item: $ConfFolder"
         Remove-Item $ConfFolder -Force -Recurse
     }
 
