@@ -126,7 +126,7 @@ function Install-WingetAutoUpdate {
     }
 }
 
-function Uninstall-WingetAutoUpdate ([Switch] $Upgrade) {
+function Uninstall-WingetAutoUpdate {
 
     Write-Host "### Uninstalling WAU started! ###"
 
@@ -136,7 +136,7 @@ function Uninstall-WingetAutoUpdate ([Switch] $Upgrade) {
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-UserContext" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-Policies" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
 
-    #If not upgrade, remove app list
+    #If upgrade, keep app list
     if (-not $Upgrade) {
         $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") -ErrorAction SilentlyContinue
         if ($AppLists) {
@@ -162,9 +162,6 @@ $Script:ProgressPreference = 'SilentlyContinue'
 
 if (-not $Uninstall) {
     Install-WingetAutoUpdate
-}
-elseif ($Upgrade) {
-    Uninstall-WingetAutoUpdate -Upgrade
 }
 else {
     Uninstall-WingetAutoUpdate
