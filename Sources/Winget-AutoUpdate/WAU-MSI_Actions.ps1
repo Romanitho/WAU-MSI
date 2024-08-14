@@ -3,6 +3,7 @@ param(
     [Parameter(Mandatory = $false)] [string] $AppListPath,
     [Parameter(Mandatory = $false)] [string] $InstallPath,
     [Parameter(Mandatory = $false)] [string] $Upgrade,
+    [Parameter(Mandatory = $false)] [string] $Repair,
     [Parameter(Mandatory = $False)] [Switch] $Uninstall = $false
 )
 
@@ -10,6 +11,7 @@ param(
 Write-Output "AppListPath:  $AppListPath"
 Write-Output "InstallPath:  $InstallPath"
 Write-Output "Upgrade:      $Upgrade"
+Write-Output "Repair:       $Repair"
 Write-Output "Uninstall:    $Uninstall"
 
 
@@ -135,7 +137,7 @@ function Uninstall-WingetAutoUpdate {
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-Policies" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
 
     #If upgrade, keep app list. Else, remove.
-    if ($Upgrade -like "Code:{*}") {
+    if ($Upgrade -like "#{*}") {
         Write-Output "-> Upgrade detected. Keeping *.txt app lists"
     }
     else {
@@ -164,7 +166,7 @@ $Script:ProgressPreference = 'SilentlyContinue'
 
 
 # Repair
-if ((-not $Uninstall) -and ($Upgrade -notlike "Code:{*}")) {
+if ($Repair -eq "#Repair") {
     Uninstall-WingetAutoUpdate
     Install-WingetAutoUpdate
 }
