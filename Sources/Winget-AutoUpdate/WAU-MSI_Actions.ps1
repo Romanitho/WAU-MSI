@@ -6,9 +6,6 @@ param(
     [Parameter(Mandatory = $False)] [Switch] $Uninstall = $false
 )
 
-#Remove the dummy prefix used for empty string argument:
-$Upgrade = $Upgrade.Replace("UP:", "")
-
 #For troubleshooting
 Write-Output "AppListPath:  $AppListPath"
 Write-Output "InstallPath:  $InstallPath"
@@ -104,7 +101,7 @@ function Install-WingetAutoUpdate {
         $task.SetSecurityDescriptor($sec, 0)
 
         #Copy App list to install folder (exept on self update)
-        if ($AppListPath -notlike "$InstallPath*") {
+        if ($AppListPath -and ($AppListPath -notlike "$InstallPath*")) {
             Write-Output "-> Copying $AppListPath to $InstallPath"
             Copy-Item -Path $AppListPath -Destination $InstallPath
         }
@@ -136,9 +133,12 @@ function Uninstall-WingetAutoUpdate {
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-UserContext" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-Policies" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
 
-    #If upgrade, keep app list
-    if (-not $Upgrade) {
-        $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") -ErrorAction SilentlyContinue
+    #If upgrade, keep app list. Else, remove.
+    if ($Upgrade -like "Code:{*}") {
+        Write-Output "-> Upgrade detected. Keeping *.txt app lists"
+    }
+    else {
+        $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") | Where-Object Name -ne "default_excluded_apps.txt"
         if ($AppLists) {
             Write-Output "-> Removing items: $AppLists"
             Remove-Item $AppLists -Force
@@ -158,6 +158,7 @@ function Uninstall-WingetAutoUpdate {
 
 <# MAIN #>
 
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $Script:ProgressPreference = 'SilentlyContinue'
 
 if (-not $Uninstall) {
