@@ -42,7 +42,7 @@ function Get-IncludedApps {
     #whitelist pulled from local file
     elseif (Test-Path "$WorkingDir\included_apps.txt") {
 
-        return (Get-Content -Path "$WorkingDir\included_apps.txt").Trim() | Where-Object { $_.length -gt 0 }
+        $AppIDs = (Get-Content -Path "$WorkingDir\included_apps.txt").Trim() | Where-Object { $_.length -gt 0 }
         Write-ToLog "-> Successsfully loaded local included apps list."
 
     }
