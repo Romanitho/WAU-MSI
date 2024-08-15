@@ -55,7 +55,6 @@ param(
 <# FUNCTIONS #>
 
 #Include external Functions
-. "$PSScriptRoot\functions\Install-Prerequisites.ps1"
 . "$PSScriptRoot\functions\Update-WinGet.ps1"
 . "$PSScriptRoot\functions\Update-StoreApps.ps1"
 . "$PSScriptRoot\functions\Add-ScopeMachine.ps1"
@@ -366,8 +365,6 @@ $Script:Winget = Get-WingetCmd
 
 if ($IsElevated -eq $True) {
     Write-ToLog "Running with admin rights.`n"
-    #Check/install prerequisites
-    Install-Prerequisites
     #Install/Update Winget
     $null = Update-Winget
     #Reload Winget command

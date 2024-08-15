@@ -14,6 +14,76 @@ Write-Output "Uninstall:    $Uninstall"
 
 
 <# FUNCTIONS #>
+function Install-Prerequisites {
+
+    try {
+        Write-Output "Checking prerequisites..."
+
+        #Check if Visual C++ 2019 or 2022 installed
+        $Visual2019 = "Microsoft Visual C++ 2015-2019 Redistributable*"
+        $Visual2022 = "Microsoft Visual C++ 2015-2022 Redistributable*"
+        $path = Get-Item HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.GetValue("DisplayName") -like $Visual2019 -or $_.GetValue("DisplayName") -like $Visual2022 }
+        if (!($path)) {
+            try {
+                Write-Output "MS Visual C++ 2015-2022 is not installed"
+
+                #Get proc architecture
+                if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") {
+                    $OSArch = "arm64"
+                }
+                elseif ($env:PROCESSOR_ARCHITECTURE -like "*64*") {
+                    $OSArch = "x64"
+                }
+                else {
+                    $OSArch = "x86"
+                }
+
+                #Download and install
+                $SourceURL = "https://aka.ms/vs/17/release/VC_redist.$OSArch.exe"
+                $Installer = "$env:TEMP\VC_redist.$OSArch.exe"
+                Write-Output "-> Downloading $SourceURL..."
+                Invoke-WebRequest $SourceURL -UseBasicParsing -OutFile $Installer
+                Write-Output "-> Installing VC_redist.$OSArch.exe..."
+                Start-Process -FilePath $Installer -Args "/passive /norestart" -Wait
+                Write-Output "-> MS Visual C++ 2015-2022 installed successfully."
+            }
+            catch {
+                Write-Output "-> MS Visual C++ 2015-2022 installation failed."
+            }
+            finally {
+                Remove-Item $Installer -ErrorAction Ignore
+            }
+        }
+
+        #Check if Microsoft.UI.Xaml.2.8 is installed
+        if (!(Get-AppxPackage -Name 'Microsoft.UI.Xaml.2.8' -AllUsers)) {
+            try {
+                Write-Output "Microsoft.UI.Xaml.2.8 is not installed"
+                #Download
+                $UIXamlUrl = "https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx"
+                $UIXamlFile = "$env:TEMP\Microsoft.UI.Xaml.2.8.x64.appx"
+                Write-Output "-> Downloading Microsoft.UI.Xaml.2.8..."
+                Invoke-RestMethod -Uri $UIXamlUrl -OutFile $UIXamlFile
+                #Install
+                Write-Output "-> Installing Microsoft.UI.Xaml.2.8..."
+                Add-AppxProvisionedPackage -Online -PackagePath $UIXamlFile -SkipLicense | Out-Null
+                Write-Output "-> Microsoft.UI.Xaml.2.8 installed successfully."
+            }
+            catch {
+                Write-Output "-> Failed to intall Microsoft.UI.Xaml.2.8..."
+            }
+            finally {
+                Remove-Item -Path $UIXamlFile -Force
+            }
+        }
+
+        Write-Output "Prerequisites checked. OK"
+    }
+    catch {
+        Write-Output "Prerequisites checked failed"
+    }
+
+}
 
 function Install-WingetAutoUpdate {
 
@@ -169,5 +239,6 @@ if ($Uninstall) {
 }
 # Install
 else {
+    Install-Prerequisites
     Install-WingetAutoUpdate
 }
