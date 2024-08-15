@@ -3,7 +3,6 @@ param(
     [Parameter(Mandatory = $false)] [string] $AppListPath,
     [Parameter(Mandatory = $false)] [string] $InstallPath,
     [Parameter(Mandatory = $false)] [string] $Upgrade,
-    [Parameter(Mandatory = $false)] [string] $Repair,
     [Parameter(Mandatory = $False)] [Switch] $Uninstall = $false
 )
 
@@ -11,7 +10,6 @@ param(
 Write-Output "AppListPath:  $AppListPath"
 Write-Output "InstallPath:  $InstallPath"
 Write-Output "Upgrade:      $Upgrade"
-Write-Output "Repair:       $Repair"
 Write-Output "Uninstall:    $Uninstall"
 
 
@@ -165,13 +163,8 @@ function Uninstall-WingetAutoUpdate {
 $Script:ProgressPreference = 'SilentlyContinue'
 
 
-# Repair
-if ($Repair -eq "#Repair") {
-    Uninstall-WingetAutoUpdate
-    Install-WingetAutoUpdate
-}
 # Uninstall
-elseif ($Uninstall) {
+if ($Uninstall) {
     Uninstall-WingetAutoUpdate
 }
 # Install
