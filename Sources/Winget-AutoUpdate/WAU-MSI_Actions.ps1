@@ -17,7 +17,7 @@ Write-Output "Uninstall:    $Uninstall"
 function Install-Prerequisites {
 
     try {
-        Write-Output "Checking prerequisites..."
+        Write-Output "### Checking prerequisites ###"
 
         #Check if Visual C++ 2019 or 2022 installed
         $Visual2019 = "Microsoft Visual C++ 2015-2019 Redistributable*"
@@ -77,17 +77,17 @@ function Install-Prerequisites {
             }
         }
 
-        Write-Output "Prerequisites checked. OK"
+        Write-Output "-> Prerequisites checked. OK"
     }
     catch {
-        Write-Output "Prerequisites checked failed"
+        Write-Output "-> Prerequisites checked failed"
     }
 
 }
 
 Function Update-WinGet {
 
-    Write-Output "Checking if WinGet is installed/up to date."
+    Write-Output "### Checking if WinGet is installed/up to date ###"
 
     #Get latest WinGet info
     $WinGeturl = 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
