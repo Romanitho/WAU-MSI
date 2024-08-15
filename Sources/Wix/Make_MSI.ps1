@@ -444,7 +444,7 @@ foreach ($platform in $platforms) {
         <SetProperty Id="MAXLOGSIZE_VALUE" After="AppSearch" Value="#[MAXLOGSIZE]">MAXLOGSIZE</SetProperty>
         <SetProperty Action="SetUPDATEPRERELEASE_0" Id="UPDATEPRERELEASE" After="AppSearch" Value="0"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_REG <> "#1")]]></SetProperty>
         <SetProperty Action="SetUPDATEPRERELEASE_1" Id="UPDATEPRERELEASE" After="AppSearch" Value="1"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_REG = "#1")]]></SetProperty>
-        <SetProperty Id="CA_PowerShell_Install" Before="CA_PowerShell_Install" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; &quot;[B_W_LIST_PATH]&quot; -InstallPath &quot;[INSTALLDIR]\&quot; -Upgrade &quot;#[UPGRADINGPRODUCTCODE]&quot; -Repair &quot;#[WixUI_InstallMode]&quot;" />
+        <SetProperty Id="CA_PowerShell_Install" Before="CA_PowerShell_Install" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; &quot;[B_W_LIST_PATH]&quot; -InstallPath &quot;[INSTALLDIR]\&quot;" />
         <SetProperty Id="CA_PowerShell_Uninstall" Before="CA_PowerShell_Uninstall" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; &quot;[B_W_LIST_PATH]&quot; -InstallPath &quot;[INSTALLDIR]\&quot; -Upgrade &quot;#[UPGRADINGPRODUCTCODE]&quot; -Uninstall" />
 
         <!-- Custom Actions -->
@@ -454,7 +454,7 @@ foreach ($platform in $platforms) {
         <InstallExecuteSequence>
             <Custom Action="StartWAU" After="InstallFinalize">RUN_WAU="YES"</Custom>
             <Custom Action="CA_PowerShell_Install" Before="InstallFinalize">NOT (REMOVE="ALL")</Custom>
-            <Custom Action="CA_PowerShell_Uninstall" Before="RemoveFiles">REMOVE="ALL"</Custom>
+            <Custom Action="CA_PowerShell_Uninstall" Before="RemoveFiles"><![CDATA[(REMOVE="ALL") OR (WixUI_InstallMode = "Repair")]]></Custom>
         </InstallExecuteSequence>
     </Product>
 </Wix>
