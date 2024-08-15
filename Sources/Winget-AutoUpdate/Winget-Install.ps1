@@ -55,7 +55,6 @@ param(
 <# FUNCTIONS #>
 
 #Include external Functions
-. "$PSScriptRoot\functions\Update-WinGet.ps1"
 . "$PSScriptRoot\functions\Update-StoreApps.ps1"
 . "$PSScriptRoot\functions\Add-ScopeMachine.ps1"
 . "$PSScriptRoot\functions\Get-WingetCmd.ps1"
@@ -365,10 +364,7 @@ $Script:Winget = Get-WingetCmd
 
 if ($IsElevated -eq $True) {
     Write-ToLog "Running with admin rights.`n"
-    #Install/Update Winget
-    $null = Update-Winget
-    #Reload Winget command
-    $Script:Winget = Get-WingetCmd
+
     #Run Scope Machine funtion
     Add-ScopeMachine
 }

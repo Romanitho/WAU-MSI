@@ -85,6 +85,69 @@ function Install-Prerequisites {
 
 }
 
+Function Update-WinGet {
+
+    Write-Output "Checking if WinGet is installed/up to date."
+
+    #Get latest WinGet info
+    $WinGeturl = 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
+
+    try {
+        #Return latest version
+        $WinGetAvailableVersion = ((Invoke-WebRequest $WinGeturl -UseBasicParsing | ConvertFrom-Json)[0].tag_name).Replace("v", "")
+    }
+    catch {
+        #if fail set version to the latest version as of 2024-08-15
+        $WinGetAvailableVersion = "1.8.1911"
+    }
+
+    try {
+        #Get Admin Context Winget Location
+        $WingetInfo = (Get-Item "$env:ProgramFiles\WindowsApps\Microsoft.DesktopAppInstaller_*_8wekyb3d8bbwe\winget.exe").VersionInfo | Sort-Object -Property FileVersionRaw
+        #If multiple versions, pick most recent one
+        $WingetCmd = $WingetInfo[-1].FileName
+        #Get current Winget Version
+        $WingetInstalledVersion = (& $WingetCmd -v).Replace("v", "")
+    }
+    catch {
+        Write-Output "-> WinGet is not installed"
+    }
+
+    #Check if the current available WinGet is newer than the installed
+    if ($WinGetAvailableVersion -gt $WinGetInstalledVersion) {
+
+        #Install WinGet MSIXBundle in SYSTEM context
+        try {
+            #Download WinGet MSIXBundle
+            Write-Output "-> Downloading WinGet MSIXBundle for App Installer..."
+            $WinGetURL = "https://github.com/microsoft/winget-cli/releases/download/v$WinGetAvailableVersion/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+            $WingetInstaller = "$env:TEMP\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+            Invoke-RestMethod -Uri $WinGetURL -OutFile $WingetInstaller
+
+            #Install
+            Write-Output "-> Installing WinGet MSIXBundle for App Installer..."
+            Add-AppxProvisionedPackage -Online -PackagePath $WingetInstaller -SkipLicense | Out-Null
+            Write-Output "-> WinGet MSIXBundle (v$WinGetAvailableVersion) for App Installer installed successfully!"
+
+            #Reset WinGet Sources
+            $WingetInfo = (Get-Item "$env:ProgramFiles\WindowsApps\Microsoft.DesktopAppInstaller_*_8wekyb3d8bbwe\winget.exe").VersionInfo | Sort-Object -Property FileVersionRaw
+            $WingetCmd = $WingetInfo[-1].FileName
+            & $WingetCmd source reset --force
+            Write-Output "-> WinGet sources reseted."
+        }
+        catch {
+            Write-Output "-> Failed to install WinGet MSIXBundle for App Installer..."
+        }
+
+        #Remove WinGet MSIXBundle
+        Remove-Item -Path $WingetInstaller -Force -ErrorAction SilentlyContinue
+
+    }
+    else {
+        Write-Output "-> WinGet is up to date: v$WinGetInstalledVersion"
+    }
+}
+
 function Install-WingetAutoUpdate {
 
     Write-Host "### Post install actions ###"
@@ -240,5 +303,6 @@ if ($Uninstall) {
 # Install
 else {
     Install-Prerequisites
+    Update-WinGet
     Install-WingetAutoUpdate
 }
