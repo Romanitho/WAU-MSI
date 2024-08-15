@@ -454,7 +454,7 @@ foreach ($platform in $platforms) {
         <InstallExecuteSequence>
             <Custom Action="StartWAU" After="InstallFinalize">RUN_WAU="YES"</Custom>
             <Custom Action="CA_PowerShell_Install" Before="InstallFinalize">NOT (REMOVE="ALL")</Custom>
-            <Custom Action="CA_PowerShell_Uninstall" Before="RemoveFiles"><![CDATA[(REMOVE="ALL") OR (WixUI_InstallMode = "Repair")]]></Custom>
+            <Custom Action="CA_PowerShell_Uninstall" Before="RemoveFiles"><![CDATA[(REMOVE="ALL") OR (REINSTALL="WAU")]]></Custom>
         </InstallExecuteSequence>
     </Product>
 </Wix>
