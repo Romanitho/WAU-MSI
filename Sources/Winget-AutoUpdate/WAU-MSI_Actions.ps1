@@ -45,6 +45,7 @@ function Install-Prerequisites {
                 Invoke-WebRequest $SourceURL -UseBasicParsing -OutFile $Installer
                 Write-Output "-> Installing VC_redist.$OSArch.exe..."
                 Start-Process -FilePath $Installer -Args "/passive /norestart" -Wait
+                Start-Sleep 3
                 Write-Output "-> MS Visual C++ 2015-2022 installed successfully."
             }
             catch {
