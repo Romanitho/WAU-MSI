@@ -11,6 +11,7 @@ Get-ChildItem "$WorkingDir\functions" -File -Filter "*.ps1" -Depth 0 | ForEach-O
 #Config console output encoding
 $null = cmd /c ''
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$Script:ProgressPreference = 'SilentlyContinue'
 
 #Log initialisation
 $LogFile = "$WorkingDir\logs\updates.log"
