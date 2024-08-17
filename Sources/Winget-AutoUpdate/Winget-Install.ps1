@@ -57,6 +57,7 @@ param(
 #Include external Functions
 . "$PSScriptRoot\functions\Update-StoreApps.ps1"
 . "$PSScriptRoot\functions\Add-ScopeMachine.ps1"
+. "$PSScriptRoot\functions\Install-Prerequisites.ps1"
 . "$PSScriptRoot\functions\Get-WingetCmd.ps1"
 . "$PSScriptRoot\functions\Write-ToLog.ps1"
 . "$PSScriptRoot\functions\Confirm-Installation.ps1"
@@ -337,20 +338,6 @@ else {
     $Script:LogFile = "$LogPath\install_$env:UserName.log"
 }
 
-#Header (not logged)
-Write-Host "`n "
-Write-Host "`t        888       888        d8888  888     888" -ForegroundColor Magenta
-Write-Host "`t        888   o   888       d88888  888     888" -ForegroundColor Magenta
-Write-Host "`t        888  d8b  888      d88P888  888     888" -ForegroundColor Magenta
-Write-Host "`t        888 d888b 888     d88P 888  888     888" -ForegroundColor Magenta
-Write-Host "`t        888d88888b888    d88P  888  888     888" -ForegroundColor Magenta
-Write-Host "`t        88888P Y88888   d88P   888  888     888" -ForegroundColor Cyan
-Write-Host "`t        8888P   Y8888  d88P    888  888     888" -ForegroundColor Magenta
-Write-Host "`t        888P     Y888 d88P     888   Y8888888P`n" -ForegroundColor Magenta
-Write-Host "`t                    Winget-AutoUpdate`n" -ForegroundColor Cyan
-Write-Host "`t     https://github.com/Romanitho/Winget-AutoUpdate`n" -ForegroundColor Magenta
-Write-Host "`t________________________________________________________`n`n"
-
 #Log Header
 if ($Uninstall) {
     Write-ToLog -LogMsg "NEW UNINSTALL REQUEST" -LogColor "Magenta" -IsHeader
@@ -364,6 +351,9 @@ $Script:Winget = Get-WingetCmd
 
 if ($IsElevated -eq $True) {
     Write-ToLog "Running with admin rights.`n"
+
+    #Install prerequisites
+    Install-Prerequisites
 
     #Run Scope Machine funtion
     Add-ScopeMachine
