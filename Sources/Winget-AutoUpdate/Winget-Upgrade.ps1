@@ -129,10 +129,6 @@ if (Test-Network) {
 
     if ($Winget) {
 
-        #Log Winget installed version
-        $WingetVer = & $Winget --version
-        Write-ToLog "Winget Version: $WingetVer"
-
         #Get Current Version
         $WAUCurrentVersion = $WAUConfig.ProductVersion
         Write-ToLog "WAU current version: $WAUCurrentVersion"
@@ -369,27 +365,23 @@ if (Test-Network) {
         }
 
         #Check if user context is activated during system run
-        if ($IsSystem) {
+        if ($IsSystem -and ($WAUConfig.WAU_UserContext -eq 1)) {
 
-            #Run WAU in user context if feature is activated
-            if ($WAUConfig.WAU_UserContext -eq 1) {
+            $UserContextTask = Get-ScheduledTask -TaskName 'Winget-AutoUpdate-UserContext' -ErrorAction SilentlyContinue
 
-                $UserContextTask = Get-ScheduledTask -TaskName 'Winget-AutoUpdate-UserContext' -ErrorAction SilentlyContinue
+            $explorerprocesses = @(Get-CimInstance -Query "SELECT * FROM Win32_Process WHERE Name='explorer.exe'" -ErrorAction SilentlyContinue)
+            If ($explorerprocesses.Count -eq 0) {
+                Write-ToLog "No explorer process found / Nobody interactively logged on..."
+            }
+            Else {
+                #Get Winget system apps to excape them befor running user context
+                Write-ToLog "User logged on, get a list of installed Winget apps in System context..."
+                Get-WingetSystemApps
 
-                $explorerprocesses = @(Get-CimInstance -Query "SELECT * FROM Win32_Process WHERE Name='explorer.exe'" -ErrorAction SilentlyContinue)
-                If ($explorerprocesses.Count -eq 0) {
-                    Write-ToLog "No explorer process found / Nobody interactively logged on..."
-                }
-                Else {
-                    #Get Winget system apps to excape them befor running user context
-                    Write-ToLog "User logged on, get a list of installed Winget apps in System context..."
-                    Get-WingetSystemApps
-
-                    #Run user context scheduled task
-                    Write-ToLog "Starting WAU in User context..."
-                    $null = $UserContextTask | Start-ScheduledTask -ErrorAction SilentlyContinue
-                    Exit 0
-                }
+                #Run user context scheduled task
+                Write-ToLog "Starting WAU in User context..."
+                $null = $UserContextTask | Start-ScheduledTask -ErrorAction SilentlyContinue
+                Exit 0
             }
         }
     }
