@@ -120,7 +120,9 @@ Write-ToLog "Notification Level: $($WAUConfig.WAU_NotificationLevel). Notificati
 if (Test-Network) {
 
     #Check prerequisites
-    Install-Prerequisites
+    if ($IsSystem) {
+        Install-Prerequisites
+    }
 
     #Check if Winget is installed and get Winget cmd
     $Script:Winget = Get-WingetCmd
