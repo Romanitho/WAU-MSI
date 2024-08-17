@@ -2,8 +2,8 @@
 name: WAU - Auto Create Pre-Release Version
 
 on:
-  pull_request:
-    branches: [main]
+  schedule:
+    - cron: "0 0 * * *"
 
 permissions:
   contents: write
