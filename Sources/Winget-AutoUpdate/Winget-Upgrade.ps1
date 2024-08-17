@@ -284,14 +284,12 @@ if (Test-Network) {
         Write-ToLog "Checking application updates on Winget Repository..." "yellow"
         $outdated = Get-WingetOutdatedApps
 
-        #If something unusual happened
-        if ($outdated -like "An unusual*") {
+        #If something unusual happened or no update found
+        if ($outdated -like "No update found.*") {
             Write-ToLog "$outdated" "cyan"
-            $outdated = $False
         }
-
         #Run only if $outdated is populated!
-        if ($outdated) {
+        elseif ($outdated) {
             #Log list of app to update
             foreach ($app in $outdated) {
                 #List available updates
@@ -359,10 +357,6 @@ if (Test-Network) {
             if ($InstallOK -gt 0) {
                 Write-ToLog "$InstallOK apps updated ! No more update." "Green"
             }
-        }
-
-        if ($InstallOK -eq 0 -or !$InstallOK) {
-            Write-ToLog "No new update." "Green"
         }
 
         #Check if user context is activated during system run
