@@ -130,10 +130,12 @@ if (Test-Network) {
 
     if ($Winget) {
 
-        #Get Current Version
-        $WAUCurrentVersion = $WAUConfig.ProductVersion
-        Write-ToLog "WAU current version: $WAUCurrentVersion"
         if ($IsSystem) {
+            
+            #Get Current Version
+            $WAUCurrentVersion = $WAUConfig.ProductVersion
+            Write-ToLog "WAU current version: $WAUCurrentVersion"
+
             #Check if WAU update feature is enabled or not if run as System
             $WAUDisableAutoUpdate = $WAUConfig.WAU_DisableAutoUpdate
             #If yes then check WAU update if run as System
