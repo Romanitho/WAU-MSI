@@ -29,7 +29,7 @@ function Install-Prerequisites {
                 Write-ToLog "-> Downloading $SourceURL..."
                 Invoke-WebRequest $SourceURL -UseBasicParsing -OutFile $Installer
                 Write-ToLog "-> Installing VC_redist.$OSArch.exe..."
-                Start-Process -FilePath $Installer -Args "/passive /norestart" -Wait
+                Start-Process -FilePath $Installer -Args "/quiet /norestart" -Wait
                 Start-Sleep 3
                 Write-ToLog "-> MS Visual C++ 2015-2022 installed successfully." "Green"
             }

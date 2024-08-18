@@ -24,9 +24,9 @@ function Install-WingetAutoUpdate {
         # Clean potential old v1 install
         $OldConfRegPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Winget-AutoUpdate"
         $OldWAUConfig = Get-ItemProperty $OldConfRegPath -ErrorAction SilentlyContinue
-        if ($OldWAUConfig.UninstallString) {
+        if ($OldWAUConfig.InstallLocation) {
             Write-Host "-> Cleanning old v1 WAU version ($($OldWAUConfig.DisplayVersion))"
-            Start-Process cmd.exe -ArgumentList "/c $($OldWAUConfig.UninstallString)" -Wait
+            Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -WindowStyle Hidden -File ""$($OldWAUConfig.InstallLocation)\WAU-Uninstall.ps1""" -Wait
         }
 
         #Get WAU config

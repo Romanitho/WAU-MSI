@@ -157,9 +157,9 @@ foreach ($platform in $platforms) {
         <Property Id="LISTPATH_VALUE">
             <RegistrySearch Id="SearchListPath" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_ListPath" Win64="$platformWin64" />
         </Property>
-        <Property Id="MODPATH" Secure="yes" />
-        <Property Id="MODPATH_VALUE">
-            <RegistrySearch Id="SearchModsPath" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_ModsPath " Win64="$platformWin64" />
+        <Property Id="MODSPATH" Secure="yes" />
+        <Property Id="MODSPATH_VALUE">
+            <RegistrySearch Id="SearchModsPath" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_ModsPath" Win64="$platformWin64" />
         </Property>
         <Property Id="AZUREBLOBURL" Secure="yes" />
         <Property Id="AZUREBLOBURL_VALUE">
@@ -186,7 +186,7 @@ foreach ($platform in $platforms) {
             <RegistrySearch Id="SearchMaxLogSize" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_MaxLogSize" Win64="$platformWin64" />
         </Property>
         <Property Id="UPDATEPRERELEASE" Secure="yes" />
-        <Property Id="UPDATEPRERELEASE_REG" Value="$UpdatePreRelease">
+        <Property Id="UPDATEPRERELEASE_VALUE" Value="$UpdatePreRelease">
             <RegistrySearch Id="SearchUpdatePrerelease" Type="raw" Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]" Name="WAU_UpdatePrerelease" Win64="$platformWin64" />
         </Property>
         <Property Id="DESKTOPSHORTCUT" Secure="yes" />
@@ -231,7 +231,7 @@ foreach ($platform in $platforms) {
                             <RegistryValue Name="WAU_ListPath" Type="string" Value="[LISTPATH_VALUE]" />
                         </RegistryKey>
                         <RegistryKey Key="SOFTWARE\[Manufacturer]\[ProductName]" Root="HKLM">
-                            <RegistryValue Name="WAU_ModsPath" Type="string" Value="[MODPATH_VALUE]" />
+                            <RegistryValue Name="WAU_ModsPath" Type="string" Value="[MODSPATH_VALUE]" />
                         </RegistryKey>
                         <RegistryKey Key="SOFTWARE\[Manufacturer]\[ProductName]" Root="HKLM">
                             <RegistryValue Name="WAU_AzureBlobSASURL" Type="string" Value="[AZUREBLOBURL_VALUE]" />
@@ -435,15 +435,15 @@ foreach ($platform in $platforms) {
         <SetProperty Action="SetUSEWHITELIST_0" Id="USEWHITELIST" After="SetLIST_PATHWhiteList" Value="0">BLACKLIST_PATH OR USEWHITELIST = "#0"</SetProperty>
         <SetProperty Action="SetUSEWHITELIST_1" Id="USEWHITELIST" After="SetUSEWHITELIST_0" Value="1">WHITELIST_PATH OR USEWHITELIST = "#1"</SetProperty>
         <SetProperty Id="LISTPATH_VALUE" After="AppSearch" Value="[LISTPATH]">LISTPATH</SetProperty>
-        <SetProperty Id="MODPATH_VALUE" After="AppSearch" Value="[MODPATH]">MODPATH</SetProperty>
+        <SetProperty Id="MODSPATH_VALUE" After="AppSearch" Value="[MODSPATH]">MODSPATH</SetProperty>
         <SetProperty Id="AZUREBLOBURL_VALUE" After="AppSearch" Value="[AZUREBLOBURL]">AZUREBLOBURL</SetProperty>
         <SetProperty Id="DONOTRUNONMETERED_VALUE" After="AppSearch" Value="#[DONOTRUNONMETERED]">DONOTRUNONMETERED</SetProperty>
         <SetProperty Id="UPDATESATTIME_VALUE" After="AppSearch" Value="[UPDATESATTIME]">UPDATESATTIME</SetProperty>
         <SetProperty Id="BYPASSLISTFORUSERS_VALUE" After="AppSearch" Value="#[BYPASSLISTFORUSERS]">BYPASSLISTFORUSERS</SetProperty>
         <SetProperty Id="MAXLOGFILES_VALUE" After="AppSearch" Value="#[MAXLOGFILES]">MAXLOGFILES</SetProperty>
         <SetProperty Id="MAXLOGSIZE_VALUE" After="AppSearch" Value="#[MAXLOGSIZE]">MAXLOGSIZE</SetProperty>
-        <SetProperty Action="SetUPDATEPRERELEASE_0" Id="UPDATEPRERELEASE" After="AppSearch" Value="0"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_REG <> "#1")]]></SetProperty>
-        <SetProperty Action="SetUPDATEPRERELEASE_1" Id="UPDATEPRERELEASE" After="AppSearch" Value="1"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_REG = "#1")]]></SetProperty>
+        <SetProperty Action="SetUPDATEPRERELEASE_0" Id="UPDATEPRERELEASE" After="AppSearch" Value="0"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_VALUE <> "#1")]]></SetProperty>
+        <SetProperty Action="SetUPDATEPRERELEASE_1" Id="UPDATEPRERELEASE" After="AppSearch" Value="1"><![CDATA[(NOT UPDATEPRERELEASE) AND (UPDATEPRERELEASE_VALUE = "#1")]]></SetProperty>
         <SetProperty Id="CA_PowerShell_Install" Before="CA_PowerShell_Install" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; &quot;[B_W_LIST_PATH]&quot; -InstallPath &quot;[INSTALLDIR]\&quot;" />
         <SetProperty Id="CA_PowerShell_Uninstall" Before="CA_PowerShell_Uninstall" Sequence="execute" Value="&quot;[%SystemDrive]\Windows\$platformSysFolder\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]WAU-MSI_Actions.ps1&quot; &quot;[B_W_LIST_PATH]&quot; -InstallPath &quot;[INSTALLDIR]\&quot; -Upgrade &quot;#[UPGRADINGPRODUCTCODE]&quot; -Uninstall" />
 
