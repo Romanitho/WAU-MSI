@@ -75,7 +75,7 @@ jobs:
           echo "### Copy ServiceUI.exe x64 to 'Sources\Winget-AutoUpdate' folder ###"
           Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate\ServiceUI.exe" -Force
 
-          echo "Install WiX"
+          echo "### Install WiX"
           dotnet new console
           dotnet tool install --global wix --version 5.0.1
           wix extension add WixToolset.UI.wixext/5.0.1 -g
