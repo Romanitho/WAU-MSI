@@ -43,6 +43,9 @@ jobs:
         run: |
           echo "Next Release version: ${{ steps.versioning.outputs.version }}"
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
       - name: Build project
         shell: powershell
         run: |
@@ -50,25 +53,24 @@ jobs:
           wget https://download.microsoft.com/download/3/3/9/339BE62D-B4B8-4956-B58D-73C4685FC492/MicrosoftDeploymentToolkit_x64.msi -UseBasicParsing -OutFile .\MicrosoftDeploymentToolkit_x64.msi
           Start-Process .\MicrosoftDeploymentToolkit_x64.msi -ArgumentList "/quiet /norestart" -Wait
 
-          echo "### Duplicate WAU to WAU_x86 and WAU_x64"
-          Copy-Item -Path ".\Sources\Winget-AutoUpdate" -Destination ".\Sources\Winget-AutoUpdate_x64" -Recurse -Force
-          #Copy-Item -Path ".\Sources\Winget-AutoUpdate" -Destination ".\Sources\Winget-AutoUpdate_x86" -Recurse -Force
+          echo "### Copy ServiceUI.exe x64 to 'Sources\Winget-AutoUpdate' folder ###"
+          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate\ServiceUI.exe" -Force
 
-          echo "### Copy ServiceUI.exe (x64/x86) to 'Sources/WAU_(x86/x64)/Winget-AutoUpdate' folders ###"
-          Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate_x64\ServiceUI.exe" -Force
-          #Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x86\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate_x86\ServiceUI.exe" -Force
+          echo "Install WiX"
+          dotnet new console
+          dotnet tool install --global wix --version 5.0.1
+          wix extension add WixToolset.UI.wixext/5.0.1 -g
+          wix extension add WixToolset.Util.wixext/5.0.1 -g
 
           echo "### Create WAU msi ###"
-          .\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\Winget-AutoUpdate_x64" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX86
-          #.\Sources\Wix\Make_MSI.ps1 -Sources ".\Sources\Winget-AutoUpdate_x86" -OutputFolder ".\" -ProductVersion ${{ steps.versioning.outputs.version }} -NoX64
+          cd .\Sources\Wix\
+          wix build -src build.wxs -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -out ..\..\WAU.msi -arch x64 -d Version=${{ steps.versioning.outputs.version }} -d Comment=STABLE -d PreRelease=0
+          cd ..\..
 
           echo "### Get MSI file SHA ###"
           $MsiSHA = (Get-FileHash .\WAU.msi).hash
           echo " - WAU.msi SHA256: $MsiSHA"
           echo "MSI_SHA=$MsiSHA" >> $env:GITHUB_ENV
-          #$MsiX86HA = (Get-FileHash .\WAU_x86.msi).hash
-          #echo " - WAU_x86.msi SHA256: $MsiX86HA"
-          #echo "MSI_SHA_X86=$MsiX86HA" >> $env:GITHUB_ENV
 
           echo "### Zip ADMX ###"
           Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
@@ -93,7 +95,7 @@ jobs:
           body: |
             |Files|Hash (SHA256)|
             |---|---|
-            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU.msi) (x64 only)|${{ env.MSI_SHA }}|
+            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU.msi) (x64)|${{ env.MSI_SHA }}|
             |[WAU_ADMX.zip](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU_ADMX.zip)|${{ env.ADMX_SHA }}|
 
 
