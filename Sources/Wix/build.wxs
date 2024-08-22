@@ -1,7 +1,9 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 
     <!-- Product Config -->
-    <Package Language="1033" Name="Winget-AutoUpdate" Version="$(var.Version)" Manufacturer="Romanitho" UpgradeCode="BDDEA607-F4AF-4229-8610-16E3B6455FDC" InstallerVersion="200"><!-- Package Config -->
+    <Package Language="1033" Name="Winget-AutoUpdate" Version="$(var.Version)" Manufacturer="Romanitho" UpgradeCode="BDDEA607-F4AF-4229-8610-16E3B6455FDC" InstallerVersion="200">
+
+        <!-- Package Config -->
         <SummaryInformation Description="WAU (x64) [$(var.Version)]" />
         <Icon Id="icon.ico" SourceFile=".\files\icon.ico" />
         <WixVariable Id="WixUIBannerBmp" Value=".\files\banner.bmp"></WixVariable>
@@ -348,7 +350,7 @@
 				<RegistryKey Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]">
 					<RegistryValue Name="WAU_DesktopShortcut" Type="integer" Value="[DESKTOPSHORTCUT]" KeyPath="yes" />
 				</RegistryKey>
-				<Shortcut Id="DesktopShortcut" Name="Run WAU" Target="[System64Folder]conhost.exe" Arguments="--headless [System64Folder]schtasks.exe -run -tn WAU\Winget-AutoUpdate" Icon="icon.ico" />
+				<Shortcut Id="DesktopShortcut" Name="Run WAU" Target="[System64Folder]conhost.exe" Arguments="--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]User-Run.ps1&quot;" Icon="icon.ico" />
 			</Component>
 		</StandardDirectory>
 		<StandardDirectory Id="ProgramMenuFolder">
@@ -357,7 +359,7 @@
 					<RegistryKey Root="HKCU" Key="SOFTWARE\[Manufacturer]\[ProductName]">
 						<RegistryValue Name="WAU_StartMenuShortcut" Type="integer" Value="[STARTMENUSHORTCUT]" KeyPath="yes" />
 					</RegistryKey>
-					<Shortcut Id="StartMenuShortcut1" Name="Run WAU" Target="[System64Folder]conhost.exe" Arguments="--headless [System64Folder]schtasks.exe -run -tn WAU\Winget-AutoUpdate" Icon="icon.ico" />
+					<Shortcut Id="StartMenuShortcut1" Name="Run WAU" Target="[System64Folder]conhost.exe" Arguments="--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;[INSTALLDIR]User-Run.ps1&quot;" Icon="icon.ico" />
 					<Shortcut Id="StartMenuShortcut2" Name="Open log" Target="[INSTALLDIR]logs\updates.log" />
 					<RemoveFolder Id="WAU" On="uninstall" />
 				</Component>

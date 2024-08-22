@@ -131,7 +131,7 @@ if (Test-Network) {
     if ($Winget) {
 
         if ($IsSystem) {
-            
+
             #Get Current Version
             $WAUCurrentVersion = $WAUConfig.ProductVersion
             Write-ToLog "WAU current version: $WAUCurrentVersion"
@@ -147,7 +147,7 @@ if (Test-Network) {
                 #Get Available Version
                 $Script:WAUAvailableVersion = Get-WAUAvailableVersion
                 #Compare
-                if ([version]$WAUAvailableVersion -ne [version]$WAUCurrentVersion) {
+                if ([version]$WAUAvailableVersion -gt [version]$WAUCurrentVersion) {
                     #If new version is available, update it
                     Write-ToLog "WAU Available version: $WAUAvailableVersion" "Yellow"
                     Update-WAU
