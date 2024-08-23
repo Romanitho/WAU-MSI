@@ -136,11 +136,7 @@ function Start-NotifTask {
         if ($IsSystem) {
 
             #Save XML to File
-            $ToastTemplateLocation = "$($WAUConfig.InstallLocation)\config\"
-            if (!(Test-Path $ToastTemplateLocation)) {
-                New-Item -ItemType Directory -Force -Path $ToastTemplateLocation
-            }
-            $ToastTemplate.Save("$ToastTemplateLocation\notif.xml")
+            $ToastTemplate.Save("$($WAUConfig.InstallLocation)\config\notif.xml")
 
             #Run Notify scheduled task to notify conneted users
             Get-ScheduledTask -TaskName "Winget-AutoUpdate-Notify" -ErrorAction SilentlyContinue | Start-ScheduledTask -ErrorAction SilentlyContinue

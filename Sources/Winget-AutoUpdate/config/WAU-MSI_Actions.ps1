@@ -139,7 +139,7 @@ function Uninstall-WingetAutoUpdate {
         Write-Output "-> Upgrade detected. Keeping *.txt app lists"
     }
     else {
-        $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt") | Where-Object Name -ne "default_excluded_apps.txt"
+        $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt")
         if ($AppLists) {
             Write-Output "-> Removing items: $AppLists"
             Remove-Item $AppLists -Force
