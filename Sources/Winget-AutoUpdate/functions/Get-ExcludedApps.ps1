@@ -48,9 +48,9 @@ function Get-ExcludedApps {
 
     }
     #blacklist pulled from default file
-    elseif (Test-Path "$WorkingDir\default_excluded_apps.txt") {
+    elseif (Test-Path "$WorkingDir\config\default_excluded_apps.txt") {
 
-        $AppIDs = (Get-Content -Path "$WorkingDir\default_excluded_apps.txt").Trim() | Where-Object { $_.length -gt 0 }
+        $AppIDs = (Get-Content -Path "$WorkingDir\config\default_excluded_apps.txt").Trim() | Where-Object { $_.length -gt 0 }
         Write-ToLog "-> Successsfully loaded default excluded apps list."
 
     }
