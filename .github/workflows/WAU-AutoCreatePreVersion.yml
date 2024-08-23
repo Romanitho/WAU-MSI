@@ -74,8 +74,8 @@ jobs:
 
           echo "### Copy ServiceUI.exe x64 to 'Sources\Winget-AutoUpdate' folder ###"
           Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate\ServiceUI.exe" -Force
-          ls .\Sources\Winget-AutoUpdate
-          
+          Get-Item .\Sources\Winget-AutoUpdate
+
           echo "### Install WiX"
           dotnet new console
           dotnet tool install --global wix --version 5.0.1
@@ -86,6 +86,7 @@ jobs:
           cd .\Sources\Wix\
           wix build -src build.wxs -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -out ..\..\WAU.msi -arch x64 -d Version=${{ steps.versioning.outputs.version }} -d Comment=NIGHTLY -d PreRelease=1
           cd ..\..
+          Get-Item .\*.msi
 
           echo "### Get MSI file SHA ###"
           $MsiSHA = (Get-FileHash .\WAU.msi).hash
@@ -94,6 +95,7 @@ jobs:
 
           echo "### Zip ADMX ###"
           Compress-Archive -Path .\Sources\Policies\ADMX -DestinationPath .\WAU_ADMX.zip -Force
+          Get-Item .\*.zip
 
           echo "### Get ADMX zip SHA ###"
           $ADMXSHA = (Get-FileHash .\WAU_ADMX.zip).hash
@@ -113,10 +115,12 @@ jobs:
           name: "v${{ steps.versioning.outputs.version }} [Nightly Build]"
           artifacts: "WAU.msi,WAU_ADMX.zip,WAU_InstallCounter"
           body: |
-            |Files|Hash (SHA256)|
-            |---|---|
-            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU.msi) (x64)|${{ env.MSI_SHA }}|
-            |[WAU_ADMX.zip](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU_ADMX.zip)|${{ env.ADMX_SHA }}|
+            |Files|Hash (SHA256)|Downloads|
+            |---|---|---|
+            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU.msi) (x64)|${{ env.MSI_SHA }}|<picture>![WAU.msi](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/v${{ steps.versioning.outputs.version }}/WAU.msi?style=flat-square&label=&color=blue)</picture>|
+            |[WAU_ADMX.zip](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ steps.versioning.outputs.version }}/WAU_ADMX.zip)|${{ env.ADMX_SHA }}|<picture>![WAU_ADMX.zip](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/v${{ steps.versioning.outputs.version }}/WAU_ADMX.zip?style=flat-square&label=&color=blue)</picture>|
+
+            <picture>![GitHub Downloads (specific asset, specific tag)](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/v1.25.0/WAU_Installer?style=flat-square&label=Total%20reported%20installations%20for%20this%20release&color=blue)</picture>
 
       - name: URL to release
         run: echo "Release -> ${{ steps.release.outputs.html_url }}"
