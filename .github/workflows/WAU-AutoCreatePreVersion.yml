@@ -74,7 +74,7 @@ jobs:
 
           echo "### Copy ServiceUI.exe x64 to 'Sources\Winget-AutoUpdate' folder ###"
           Copy-Item -Path "C:\Program Files\Microsoft Deployment Toolkit\Templates\Distribution\Tools\x64\ServiceUI.exe" -Destination ".\Sources\Winget-AutoUpdate\ServiceUI.exe" -Force
-          Get-Item .\Sources\Winget-AutoUpdate
+          Get-Item .\Sources\Winget-AutoUpdate\*
 
           echo "### Install WiX"
           dotnet new console
@@ -86,7 +86,7 @@ jobs:
           cd .\Sources\Wix\
           wix build -src build.wxs -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -out ..\..\WAU.msi -arch x64 -d Version=${{ steps.versioning.outputs.version }} -d Comment=NIGHTLY -d PreRelease=1
           cd ..\..
-          Get-Item .\*.msi
+          Get-Item .\WAU.msi
 
           echo "### Get MSI file SHA ###"
           $MsiSHA = (Get-FileHash .\WAU.msi).hash
