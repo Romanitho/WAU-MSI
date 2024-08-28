@@ -330,10 +330,10 @@
 					<RegistryKey Key="SOFTWARE\[Manufacturer]\[ProductName]" Root="HKLM">
 						<RegistryValue Name="WAU_UpdatePrerelease" Type="integer" Value="[UPDATEPRERELEASE]" />
 					</RegistryKey>
-					<RegistryKey Key="AppUserModelId\Windows.SystemToast.Winget.Notification" Root="HKCR">
+					<RegistryKey Key="AppUserModelId\Windows.SystemToast.WAU.Notification" Root="HKCR">
 						<RegistryValue Name="DisplayName" Type="expandable" Value="Application Update" />
 					</RegistryKey>
-					<RegistryKey Key="AppUserModelId\Windows.SystemToast.Winget.Notification" Root="HKCR">
+					<RegistryKey Key="AppUserModelId\Windows.SystemToast.WAU.Notification" Root="HKCR">
 						<RegistryValue Name="IconUri" Type="expandable" Value="%SystemRoot%\system32\@WindowsUpdateToastIcon.png" />
 					</RegistryKey>
 					<RegistryKey Root="HKLM" Key="SOFTWARE\[Manufacturer]\[ProductName]">
