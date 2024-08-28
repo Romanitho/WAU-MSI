@@ -1,10 +1,9 @@
 Google.Chrome
-Microsoft.Edge
-Microsoft.EdgeWebView2Runtime
+Microsoft.Edge*
 Microsoft.Office
 Microsoft.OneDrive
-Microsoft.Teams
-Microsoft.Teams.Classic
+Microsoft.Teams*
 Mozilla.Firefox*
+Opera.Opera*
 TeamViewer.TeamViewer*
 Microsoft.RemoteDesktopClient
