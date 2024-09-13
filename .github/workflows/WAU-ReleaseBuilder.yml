@@ -77,20 +77,25 @@ jobs:
         run: |
           $NextAutoSemver = "${{ steps.versioning.outputs.version }}"
           if ("${{ env.ReleaseType }}" -eq "Release") {
-            $NextSemver = $MsiVersion = $NextAutoSemver.Split("-")[0]
-            $Prerelease = 0
+            $MsiVersion  = $NextAutoSemver.Split("-")[0]
+            $NextSemver  = "v" + $NextAutoSemver.Split("-")[0]
+            $ReleaseName = $NextSemver
+            $Prerelease  = 0
           }
           else {
-            $MsiVersion = $NextAutoSemver.Split("-")[0]
-            $NextSemver = $NextAutoSemver.Replace("-0","-n")
-            $Prerelease = 1
+            $MsiVersion  = $NextAutoSemver.Split("-")[0]
+            $NextSemver  = "v" + $NextAutoSemver.Replace("-0","-n")
+            $ReleaseName = $NextSemver + " [Nightly Build]"
+            $Prerelease  = 1
           }
           echo "MSI version: $MsiVersion"
           echo "Semver created: $NextSemver"
           echo "Prerelease: $Prerelease"
+          echo "Release name: $ReleaseName"
           echo "MsiVersion=$MsiVersion" >> $env:GITHUB_ENV
           echo "NextSemVer=$NextSemVer" >> $env:GITHUB_ENV
           echo "Prerelease=$Prerelease" >> $env:GITHUB_ENV
+          echo "ReleaseName=$ReleaseName" >> $env:GITHUB_ENV
 
       - name: Build project
         if: env.ReleaseType != 'No'
@@ -137,15 +142,15 @@ jobs:
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1.14.0
         if: env.ReleaseType != 'No'
         with:
-          tag: "v${{ env.NextSemVer }}"
+          tag: ${{ env.NextSemVer }}
           prerelease: ${{ github.event.inputs.pre-release || true }}
           generateReleaseNotes: true
-          name: "v${{ env.NextSemVer }} [Nightly Build]"
+          name: ${{ env.ReleaseName }}
           artifacts: "WAU.msi,WAU_ADMX.zip,WAU_InstallCounter"
           body: |
             |Files|Hash (SHA256)|Downloads|
             |---|---|---|
-            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ env.NextSemVer }}/WAU.msi) (x64)|${{ env.MSI_SHA }}|<picture>![WAU.msi](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/v${{ env.NextSemVer }}/WAU.msi?style=flat-square&label=&color=blue)</picture>|
-            |[WAU_ADMX.zip](https://github.com/Romanitho/WAU-MSI/releases/download/v${{ env.NextSemVer }}/WAU_ADMX.zip)|${{ env.ADMX_SHA }}|<picture>![WAU_ADMX.zip](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/v${{ env.NextSemVer }}/WAU_ADMX.zip?style=flat-square&label=&color=blue)</picture>|
+            |[WAU.msi](https://github.com/Romanitho/WAU-MSI/releases/download/${{ env.NextSemVer }}/WAU.msi) (x64)|${{ env.MSI_SHA }}|<picture>![WAU.msi](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/${{ env.NextSemVer }}/WAU.msi?style=flat-square&label=&color=blue)</picture>|
+            |[WAU_ADMX.zip](https://github.com/Romanitho/WAU-MSI/releases/download/${{ env.NextSemVer }}/WAU_ADMX.zip)|${{ env.ADMX_SHA }}|<picture>![WAU_ADMX.zip](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/${{ env.NextSemVer }}/WAU_ADMX.zip?style=flat-square&label=&color=blue)</picture>|
 
-            <picture>![Install counter](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/v1.25.0/WAU_Installer?style=flat-square&label=Total%20reported%20installations%20for%20this%20release&color=blue)</picture>
+            <picture>![Install counter](https://img.shields.io/github/downloads/Romanitho/WAU-MSI/${{ env.NextSemVer }}/WAU_Installer?style=flat-square&label=Total%20reported%20installations%20for%20this%20release&color=blue)</picture>
