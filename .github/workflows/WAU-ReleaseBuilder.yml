@@ -138,7 +138,7 @@ jobs:
         if: env.ReleaseType != 'No'
         with:
           tag: "v${{ env.NextSemVer }}"
-          prerelease: true
+          prerelease: ${{ github.event.inputs.pre-release || true }}
           generateReleaseNotes: true
           name: "v${{ env.NextSemVer }} [Nightly Build]"
           artifacts: "WAU.msi,WAU_ADMX.zip,WAU_InstallCounter"
