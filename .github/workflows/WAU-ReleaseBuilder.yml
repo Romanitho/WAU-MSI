@@ -2,10 +2,10 @@
 name: WAU - Release builder
 
 on:
-  #To trigger nighly release (Auto)
+  # To trigger nightly release (Auto)
   schedule:
     - cron: "*/5 * * * *"
-  #To trigger stable release
+  # To trigger stable release
   workflow_dispatch:
     inputs:
       version:
@@ -73,7 +73,7 @@ jobs:
 
       - name: Format Semver (and msi version)
         if: env.ReleaseType != 'No'
-        #Remove "-0" for stable release and replace by "-n" for Nightlies
+        # Remove "-0" for stable release and replace by "-n" for Nightlies
         run: |
           $NextAutoSemver = "${{ steps.versioning.outputs.version }}"
           if ("${{ env.ReleaseType }}" -eq "Release") {
