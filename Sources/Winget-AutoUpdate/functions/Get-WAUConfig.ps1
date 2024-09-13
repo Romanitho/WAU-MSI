@@ -3,7 +3,7 @@
 Function Get-WAUConfig {
 
     #Get WAU Configurations from install config
-    $WAUConfig_64_86 = Get-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Romanitho\Winget-AutoUpdate*", "HKLM:\SOFTWARE\Romanitho\Winget-AutoUpdate*" -ErrorAction SilentlyContinue | Sort-Object { $_.ProductVersion } -Descending
+    $WAUConfig_64_86 = Get-ItemProperty -Path "HKLM:\SOFTWARE\Romanitho\Winget-AutoUpdate*", "HKLM:\SOFTWARE\WOW6432Node\Romanitho\Winget-AutoUpdate*" -ErrorAction SilentlyContinue | Sort-Object { $_.ProductVersion } -Descending
     $WAUConfig = $WAUConfig_64_86[0]
 
     #Check if GPO Management is enabled

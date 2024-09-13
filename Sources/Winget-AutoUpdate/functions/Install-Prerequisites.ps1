@@ -57,7 +57,7 @@ function Install-Prerequisites {
                 Write-ToLog "-> Microsoft.VCLibs.140.00.UWPDesktop installed successfully." "Green"
             }
             catch {
-                Write-ToLog "-> Failed to intall Microsoft.VCLibs.140.00.UWPDesktop..." "Red"
+                Write-ToLog "-> Failed to install Microsoft.VCLibs.140.00.UWPDesktop..." "Red"
             }
             finally {
                 Remove-Item -Path $VCLibsFile -Force
@@ -79,7 +79,7 @@ function Install-Prerequisites {
                 Write-ToLog "-> Microsoft.UI.Xaml.2.8 installed successfully." "Green"
             }
             catch {
-                Write-ToLog "-> Failed to intall Microsoft.UI.Xaml.2.8..." "Red"
+                Write-ToLog "-> Failed to install Microsoft.UI.Xaml.2.8..." "Red"
             }
             finally {
                 Remove-Item -Path $UIXamlFile -Force
@@ -102,7 +102,7 @@ function Install-Prerequisites {
             #If multiple versions, pick most recent one
             $WingetCmd = $WingetInfo[-1].FileName
             #Get current Winget Version
-            $WingetInstalledVersion = (& $WingetCmd -v).Replace("v","").trim()
+            $WingetInstalledVersion = (& $WingetCmd -v).Replace("v", "").trim()
         }
         catch {
             Write-ToLog "WinGet is not installed" "Red"
@@ -127,11 +127,11 @@ function Install-Prerequisites {
                 #If multiple versions, pick most recent one
                 $WingetCmd = $WingetInfo[-1].FileName
                 & $WingetCmd source reset --force
-                Write-ToLog "-> WinGet sources reset.`n" "green"
+                Write-ToLog "-> WinGet sources reset." "green"
                 $return = "success"
             }
             catch {
-                Write-ToLog "-> Failed to install WinGet MSIXBundle for App Installer...`n" "red"
+                Write-ToLog "-> Failed to install WinGet MSIXBundle for App Installer..." "red"
                 #Force Store Apps to update
                 Update-StoreApps
                 $return = "fail"
@@ -141,11 +141,11 @@ function Install-Prerequisites {
             Remove-Item -Path $WingetInstaller -Force -ErrorAction SilentlyContinue
         }
         else {
-            Write-ToLog "-> WinGet is up to date: v$WinGetInstalledVersion`n" "Green"
+            Write-ToLog "-> WinGet is up to date: v$WinGetInstalledVersion" "Green"
         }
 
         Write-ToLog "Prerequisites checked. OK" "Green"
-        
+
     }
     catch {
 

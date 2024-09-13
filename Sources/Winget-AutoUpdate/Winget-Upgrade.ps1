@@ -13,7 +13,7 @@ $null = cmd /c ''
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $Script:ProgressPreference = 'SilentlyContinue'
 
-#Log initialisation
+#Log initialization
 $LogFile = "$WorkingDir\logs\updates.log"
 
 #Check if running account is system or interactive logon
@@ -32,6 +32,10 @@ if ($IsSystem) {
         # Check if symlink WAU-updates.log exists, make symlink (doesn't work under ServiceUI)
         if (!(Test-Path -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-updates.log" -ErrorAction SilentlyContinue)) {
             $symLink = New-Item -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-updates.log" -ItemType SymbolicLink -Value $LogFile -Force -ErrorAction SilentlyContinue
+        }
+        # Check if install.log and symlink WAU-install.log exists, make symlink (doesn't work under ServiceUI)
+        if ((Test-Path -Path ('{0}\logs\install.log' -f $WorkingDir) -ErrorAction SilentlyContinue) -and !(Test-Path -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-install.log" -ErrorAction SilentlyContinue)) {
+            $symLink = (New-Item -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs\WAU-install.log" -ItemType SymbolicLink -Value ('{0}\logs\install.log' -f $WorkingDir) -Force -Confirm:$False -ErrorAction SilentlyContinue)
         }
     }
     #Check if running with session ID 0
@@ -106,10 +110,14 @@ if ($IsSystem) {
     #LogRotation if System
     $LogRotate = Invoke-LogRotation $LogFile $MaxLogFiles $MaxLogSize
     if ($LogRotate -eq $False) {
-        Write-ToLog "An Exception occured during Log Rotation..."
+        Write-ToLog "An Exception occurred during Log Rotation..."
     }
 
-    #Run Scope Machine funtion if run as System
+    #Run post update actions if necessary if run as System
+    if (!($WAUConfig.WAU_PostUpdateActions -eq 0)) {
+        Invoke-PostUpdateActions
+    }
+    #Run Scope Machine function if run as System
     Add-ScopeMachine
 }
 
@@ -183,7 +191,13 @@ if (Test-Network) {
                         $Script:ReachNoPath = $False
                     }
                     if ($NewList) {
-                        Write-ToLog "Newer List downloaded/copied to local path: $($WAUConfig.InstallLocation.TrimEnd(" ", "\"))" "Yellow"
+                        if ($AlwaysDownloaded) {
+                            Write-ToLog "List downloaded/copied to local path: $($WAUConfig.InstallLocation.TrimEnd(" ", "\"))" "Yellow"
+                        }
+                        else {
+                            Write-ToLog "Newer List downloaded/copied to local path: $($WAUConfig.InstallLocation.TrimEnd(" ", "\"))" "Yellow"
+                        }
+                        $Script:AlwaysDownloaded = $False
                     }
                     else {
                         if ($WAUConfig.WAU_UseWhiteList -and (Test-Path "$WorkingDir\included_apps.txt")) {
@@ -291,7 +305,7 @@ if (Test-Network) {
             Write-ToLog "$outdated" "cyan"
         }
         #Run only if $outdated is populated!
-        elseif ($outdated) {
+        else {
             #Log list of app to update
             foreach ($app in $outdated) {
                 #List available updates
@@ -361,6 +375,10 @@ if (Test-Network) {
             }
         }
 
+        if ($InstallOK -eq 0 -or !$InstallOK) {
+            Write-ToLog "No new update." "Green"
+        }
+
         #Check if user context is activated during system run
         if ($IsSystem -and ($WAUConfig.WAU_UserContext -eq 1)) {
 
@@ -371,7 +389,7 @@ if (Test-Network) {
                 Write-ToLog "No explorer process found / Nobody interactively logged on..."
             }
             Else {
-                #Get Winget system apps to excape them befor running user context
+                #Get Winget system apps to escape them before running user context
                 Write-ToLog "User logged on, get a list of installed Winget apps in System context..."
                 Get-WingetSystemApps
 
@@ -392,3 +410,4 @@ if (Test-Network) {
 
 #End
 Write-ToLog "End of process!" "Cyan"
+Start-Sleep 3

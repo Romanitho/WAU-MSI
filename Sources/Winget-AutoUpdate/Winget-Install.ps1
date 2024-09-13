@@ -55,9 +55,9 @@ param(
 <# FUNCTIONS #>
 
 #Include external Functions
+. "$PSScriptRoot\functions\Install-Prerequisites.ps1"
 . "$PSScriptRoot\functions\Update-StoreApps.ps1"
 . "$PSScriptRoot\functions\Add-ScopeMachine.ps1"
-. "$PSScriptRoot\functions\Install-Prerequisites.ps1"
 . "$PSScriptRoot\functions\Get-WingetCmd.ps1"
 . "$PSScriptRoot\functions\Write-ToLog.ps1"
 . "$PSScriptRoot\functions\Confirm-Installation.ps1"
@@ -262,7 +262,7 @@ function Uninstall-App ($AppID, $AppArgs) {
 
 #Function to Add app to WAU white list
 function Add-WAUWhiteList ($AppID) {
-    #Check if WAU default intall path is defined
+    #Check if WAU default install path is defined
     if ($WAUInstallLocation) {
         $WhiteList = "$WAUInstallLocation\included_apps.txt"
         #Create included_apps.txt if it doesn't exist
@@ -271,7 +271,7 @@ function Add-WAUWhiteList ($AppID) {
         }
         Write-ToLog "-> Add $AppID to WAU included_apps.txt"
         #Add App to "included_apps.txt"
-        Add-Content -path $WhiteList -Value "`n$AppID" -Force
+        Add-Content -Path $WhiteList -Value "`n$AppID" -Force
         #Remove duplicate and blank lines
         $file = Get-Content $WhiteList | Select-Object -Unique | Where-Object { $_.trim() -ne "" } | Sort-Object
         $file | Out-File $WhiteList
@@ -280,7 +280,7 @@ function Add-WAUWhiteList ($AppID) {
 
 #Function to Remove app from WAU white list
 function Remove-WAUWhiteList ($AppID) {
-    #Check if WAU default intall path exists
+    #Check if WAU default install path exists
     $WhiteList = "$WAUInstallLocation\included_apps.txt"
     if (Test-Path $WhiteList) {
         Write-ToLog "-> Remove $AppID from WAU included_apps.txt"
@@ -313,7 +313,7 @@ $Script:IsElevated = $CurrentPrincipal.IsInRole([Security.Principal.WindowsBuilt
 $WAURegKey = "HKLM:\SOFTWARE\Romanitho\Winget-AutoUpdate\"
 $Script:WAUInstallLocation = Get-ItemProperty $WAURegKey -ErrorAction SilentlyContinue | Select-Object -ExpandProperty InstallLocation
 
-#LogPath initialisation
+#LogPath initialization
 if (!($LogPath)) {
     #If LogPath is not set, get WAU log path
     if ($WAUInstallLocation) {
@@ -325,7 +325,7 @@ if (!($LogPath)) {
     }
 }
 
-#Logs initialisation
+#Logs initialization
 if (!(Test-Path $LogPath)) {
     New-Item -ItemType Directory -Force -Path $LogPath | Out-Null
 }
@@ -346,20 +346,23 @@ else {
     Write-ToLog -LogMsg "NEW INSTALL REQUEST" -LogColor "Magenta" -IsHeader
 }
 
-#Get Winget command
-$Script:Winget = Get-WingetCmd
-
 if ($IsElevated -eq $True) {
     Write-ToLog "Running with admin rights.`n"
 
-    #Install prerequisites
+    #Check/install prerequisites
     Install-Prerequisites
 
-    #Run Scope Machine funtion
+    #Reload Winget command
+    $Script:Winget = Get-WingetCmd
+
+    #Run Scope Machine function
     Add-ScopeMachine
 }
 else {
     Write-ToLog "Running without admin rights.`n"
+
+    #Get Winget command
+    $Script:Winget = Get-WingetCmd
 }
 
 if ($Winget) {
