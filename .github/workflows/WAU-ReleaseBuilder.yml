@@ -78,13 +78,13 @@ jobs:
           $NextAutoSemver = "${{ steps.versioning.outputs.version }}"
           if ("${{ env.ReleaseType }}" -eq "Release") {
             $MsiVersion  = $NextAutoSemver.Split("-")[0]
-            $NextSemver  = "v" + $NextAutoSemver.Split("-")[0]
+            $NextSemver  = $NextAutoSemver.Split("-")[0]
             $ReleaseName = $NextSemver
             $Prerelease  = 0
           }
           else {
             $MsiVersion  = $NextAutoSemver.Split("-")[0]
-            $NextSemver  = "v" + $NextAutoSemver.Replace("-0","-n")
+            $NextSemver  = $NextAutoSemver.Replace("-0","-n")
             $ReleaseName = $NextSemver + " [Nightly Build]"
             $Prerelease  = 1
           }
