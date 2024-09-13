@@ -117,7 +117,7 @@ jobs:
 
           echo "### Create WAU msi ###"
           cd .\Sources\Wix\
-          wix build -src build.wxs -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -out ..\..\WAU.msi -arch x64 -d Version=${{ env.MsiVersion }} -d Comment=NIGHTLY -d PreRelease=${{ env.PreRelease }}
+          wix build -src build.wxs -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -out ..\..\WAU.msi -arch x64 -d Version=${{ env.MsiVersion }} -d Comment=${{ env.ReleaseName }} -d PreRelease=${{ env.PreRelease }}
           cd ..\..
           Get-Item .\WAU.msi
 
