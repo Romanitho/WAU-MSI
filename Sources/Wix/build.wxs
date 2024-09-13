@@ -280,7 +280,7 @@
 			<Directory Id="INSTALLDIR" Name="Winget-AutoUpdate">
 				<Component Id="CompReg" >
 					<RegistryKey Key="SOFTWARE\[Manufacturer]\[ProductName]" Root="HKLM">
-						<RegistryValue Name="ProductVersion" Type="string" Value="[ProductVersion]" KeyPath="yes" />
+						<RegistryValue Name="ProductVersion" Type="string" Value="$(var.NextSemVer)" KeyPath="yes" />
 					</RegistryKey>
 					<RegistryKey Key="SOFTWARE\[Manufacturer]\[ProductName]" Root="HKLM">
 						<RegistryValue Name="InstallLocation" Type="string" Value="[INSTALLDIR]" />
