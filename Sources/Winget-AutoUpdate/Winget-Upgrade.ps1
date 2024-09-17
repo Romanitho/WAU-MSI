@@ -14,7 +14,7 @@ $null = cmd /c ''
 $Script:ProgressPreference = 'SilentlyContinue'
 
 #Set GitHub Repo
-$Script:GitRepo = "https://github.com/Romanitho/WAU-MSI"
+$Script:GitHub_Repo = "WAU-MSI"
 
 #Log initialization
 $LogFile = "$WorkingDir\logs\updates.log"
