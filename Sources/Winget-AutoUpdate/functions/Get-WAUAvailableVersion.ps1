@@ -14,7 +14,7 @@ function Get-WAUAvailableVersion {
             $WAUAvailableVersion = ((Invoke-WebRequest $WAUurl -UseBasicParsing | ConvertFrom-Json)[0].tag_name).Replace("v", "")
         }
         catch {
-            $url = "https://github.com/Romanitho/WAU-MSI/releases"
+            $url = "$GitRepo/releases"
             $link = ((Invoke-WebRequest $url -UseBasicParsing).Links.href -match "/WAU-MSI/releases/tag/v*")[0]
             $WAUAvailableVersion = $link.Trim().Split("v")[-1]
         }
@@ -28,7 +28,7 @@ function Get-WAUAvailableVersion {
             $WAUAvailableVersion = ((Invoke-WebRequest $WAUurl -UseBasicParsing | ConvertFrom-Json)[0].tag_name).Replace("v", "")
         }
         catch {
-            $url = "https://github.com/Romanitho/WAU-MSI/releases/latest"
+            $url = "$GitRepo/releases/latest"
             $link = ((Invoke-WebRequest $url -UseBasicParsing).Links.href -match "/WAU-MSI/releases/tag/v*")[0]
             $WAUAvailableVersion = $link.Trim().Split("v")[-1]
         }
