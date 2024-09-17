@@ -2,7 +2,7 @@
 
 function Update-WAU {
 
-    $OnClickAction = "https://github.com/Romanitho/WAU-MSI/releases"
+    $OnClickAction = "$GitRepo/releases"
     $Button1Text = $NotifLocale.local.outputs.output[10].message
 
     #Send available update notification
@@ -16,7 +16,7 @@ function Update-WAU {
         #Download the msi
         Write-ToLog "Downloading the GitHub Repository version $WAUAvailableVersion" "Cyan"
         $MsiFile = "$env:temp\WAU.msi"
-        Invoke-RestMethod -Uri "https://github.com/Romanitho/WAU-MSI/releases/download/v$($WAUAvailableVersion)/WAU.msi" -OutFile $MsiFile
+        Invoke-RestMethod -Uri "$GitRepo/releases/download/v$($WAUAvailableVersion)/WAU.msi" -OutFile $MsiFile
 
         #Update WAU
         Write-ToLog "Updating WAU..." "Yellow"

@@ -13,6 +13,9 @@ $null = cmd /c ''
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $Script:ProgressPreference = 'SilentlyContinue'
 
+#Set GitHub Repo
+$Script:GitRepo = "https://github.com/Romanitho/WAU-MSI"
+
 #Log initialization
 $LogFile = "$WorkingDir\logs\updates.log"
 
@@ -27,6 +30,38 @@ if ($IsSystem) {
     if (!(Test-Path -Path $LogFile)) {
         Write-ToLog "New log file created"
     }
+
+    # Maximum number of log files to keep. Default is 3. Setting MaxLogFiles to 0 will keep all log files.
+    $MaxLogFiles = $WAUConfig.WAU_MaxLogFiles
+    if ($null -eq $MaxLogFiles) {
+        [int32] $MaxLogFiles = 3
+    }
+    else {
+        [int32] $MaxLogFiles = $MaxLogFiles
+    }
+
+    # Maximum size of log file.
+    $MaxLogSize = $WAUConfig.WAU_MaxLogSize
+    if (!$MaxLogSize) {
+        [int64] $MaxLogSize = 1048576 # in bytes, default is 1048576 = 1 MB
+    }
+    else {
+        [int64] $MaxLogSize = $MaxLogSize
+    }
+
+    #LogRotation
+    $LogRotate = Invoke-LogRotation $LogFile $MaxLogFiles $MaxLogSize
+    if ($LogRotate -eq $False) {
+        Write-ToLog "An Exception occurred during Log Rotation..."
+    }
+
+    #Run post update actions if necessary
+    if (!($WAUConfig.WAU_PostUpdateActions -eq 0)) {
+        Invoke-PostUpdateActions
+    }
+    #Run Scope Machine function
+    Add-ScopeMachine
+
     # Check if Intune Management Extension Logs folder exists
     if ((Test-Path -Path "${env:ProgramData}\Microsoft\IntuneManagementExtension\Logs" -ErrorAction SilentlyContinue)) {
         # Check if symlink WAU-updates.log exists, make symlink (doesn't work under ServiceUI)
@@ -73,41 +108,6 @@ else {
 $Script:WAUConfig = Get-WAUConfig
 if ($($WAUConfig.WAU_ActivateGPOManagement -eq 1)) {
     Write-ToLog "WAU Policies management Enabled."
-}
-
-#Log running context and more...
-if ($IsSystem) {
-
-    # Maximum number of log files to keep. Default is 3. Setting MaxLogFiles to 0 will keep all log files.
-    $MaxLogFiles = $WAUConfig.WAU_MaxLogFiles
-    if ($null -eq $MaxLogFiles) {
-        [int32] $MaxLogFiles = 3
-    }
-    else {
-        [int32] $MaxLogFiles = $MaxLogFiles
-    }
-
-    # Maximum size of log file.
-    $MaxLogSize = $WAUConfig.WAU_MaxLogSize
-    if (!$MaxLogSize) {
-        [int64] $MaxLogSize = 1048576 # in bytes, default is 1048576 = 1 MB
-    }
-    else {
-        [int64] $MaxLogSize = $MaxLogSize
-    }
-
-    #LogRotation if System
-    $LogRotate = Invoke-LogRotation $LogFile $MaxLogFiles $MaxLogSize
-    if ($LogRotate -eq $False) {
-        Write-ToLog "An Exception occurred during Log Rotation..."
-    }
-
-    #Run post update actions if necessary if run as System
-    if (!($WAUConfig.WAU_PostUpdateActions -eq 0)) {
-        Invoke-PostUpdateActions
-    }
-    #Run Scope Machine function if run as System
-    Add-ScopeMachine
 }
 
 #Get Notif Locale function
