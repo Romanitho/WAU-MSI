@@ -85,7 +85,7 @@ jobs:
           else {
             $MsiVersion  = $NextAutoSemver.Split("-")[0]
             $NextSemver  = $NextAutoSemver.Replace("-0","-n")
-            $ReleaseName = "WAU 2.0.x " + $NextSemver + " [Nightly Build]"
+            $ReleaseName = "WAU 2.0 (" + $NextSemver + ") [Nightly Build]"
             $Prerelease  = 1
           }
           echo "MSI version: $MsiVersion"
@@ -139,7 +139,7 @@ jobs:
           echo "Install counter file." > WAU_InstallCounter
 
           echo "### Download the latest v1 WAU.zip (as v2 updater)"
-          wget https://github.com/Romanitho/Winget-AutoUpdate/releases/download/v1.21.8/WAU.zip -UseBasicParsing -OutFile .\WAU.zip
+          wget https://github.com/Romanitho/Winget-AutoUpdate/releases/download/v1.21.13/WAU.zip -UseBasicParsing -OutFile .\WAU.zip
 
       - name: Create release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1.14.0
@@ -153,7 +153,7 @@ jobs:
           body: |
             ## ⚠️ Breaking changes ⚠️
             - Registry key for configurations moved to HKLM\SOFTWARE\Romanitho\Winget-AutoUpdate, which can affect administrators.
-            - WAU msi will update in the current install folder. It is recommanded to uninstall WAU v1 and reinstall WAU v2 in default install folder.
+            - WAU.msi will update in the current install folder. It is recommanded to uninstall WAU v1 and reinstall WAU v2 in default install folder (ProgramFiles).
 
             ## Files
             |Files|Hash (SHA256)|Downloads|
