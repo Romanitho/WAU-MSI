@@ -92,7 +92,7 @@ function Install-WingetAutoUpdate {
         Register-ScheduledTask -TaskName 'Winget-AutoUpdate-UserContext' -TaskPath 'WAU' -InputObject $task -Force | Out-Null
 
         # Settings for the scheduled task for Notifications
-        $taskAction = New-ScheduledTaskAction -Execute "conhost.exe" -Argument "--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File winget-notify.ps1" -WorkingDirectory $InstallPath
+        $taskAction = New-ScheduledTaskAction -Execute "conhost.exe" -Argument "--headless powershell.exe -NoProfile -ExecutionPolicy Bypass -File WAU-notify.ps1" -WorkingDirectory $InstallPath
         $taskUserPrincipal = New-ScheduledTaskPrincipal -GroupId S-1-5-11
         $taskSettings = New-ScheduledTaskSettingsSet -Compatibility Win8 -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 00:05:00
         # Set up the task, and register it
@@ -192,9 +192,9 @@ function Uninstall-WingetAutoUpdate {
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-UserContext" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
     Get-ScheduledTask -TaskName "Winget-AutoUpdate-Policies" -ErrorAction SilentlyContinue | Unregister-ScheduledTask -Confirm:$False
 
-    #If upgrade, keep app list. Else, remove.
+    #If upgrade, keep app list and mods. Else, remove.
     if ($Upgrade -like "#{*}") {
-        Write-Output "-> Upgrade detected. Keeping *.txt app lists"
+        Write-Output "-> Upgrade detected. Keeping *.txt and mods app lists"
     }
     else {
         $AppLists = Get-Item (Join-Path "$InstallPath" "*_apps.txt")
@@ -202,6 +202,7 @@ function Uninstall-WingetAutoUpdate {
             Write-Output "-> Removing items: $AppLists"
             Remove-Item $AppLists -Force
         }
+        Remove-Item "$InstallPath\mods" -Recurse -Force
     }
 
     $ConfFolder = Get-Item (Join-Path "$InstallPath" "config") -ErrorAction SilentlyContinue
